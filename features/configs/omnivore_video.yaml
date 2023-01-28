@@ -1,0 +1,53 @@
+fps: 30
+force_yes: false
+io:
+  filter_completed: true
+  video_dir_path: /home/user/Desktop/Ego4d/samples/videos
+  ego4d_download_dir: /home/user/Desktop/Ego4d/samples
+  uid_list: null
+  video_limit: -1
+  out_path: /home/user/Desktop/Ego4d/samples/features/omnivore_video
+  debug_path: /home/user/Desktop/Ego4d/samples/features/debug
+  debug_mode: false
+  exclude_no_audio: false
+inference_config:
+  device: cuda
+  batch_size: 1
+  num_workers: 10
+  prefetch_factor: 3
+  fps: 30
+  frame_window: 32
+  stride: 16
+  include_audio: false
+  include_video: true
+  norm_config:
+    normalize_audio: false
+    resample_audio_rate: 16000
+    resampling_method: "sinc_interpolation"
+schedule_config:
+  run_locally: true
+  log_folder: slurm_log/%j
+  timeout_min: 3750
+  constraint: volta
+  slurm_partition: pixar
+  slurm_array_parallelism: 256
+  gpus_per_node: 1
+  cpus_per_task: 10
+  overhead: 1.1
+  time_per_forward_pass: 2.5
+  schedule_time_per_node: 10.0
+model_config:
+  model_name: "omnivore_swinB_imagenet21k"
+  input_type: "video"
+  side_size: 224
+  crop_size: 224
+  dilation: 1
+  mean:
+  - 0.485
+  - 0.456
+  - 0.406
+  std:
+  - 0.229
+  - 0.224
+  - 0.225
+model_module_str: ego4d.features.models.omnivore

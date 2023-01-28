@@ -1,0 +1,53 @@
+fps: 30
+force_yes: false
+io:
+  filter_completed: true
+  video_dir_path: /home/alex/workspace/Ego4d/samples/videos
+  ego4d_download_dir: /home/alex/workspace/Ego4d/samples
+  uid_list: null
+  video_limit: -1
+  out_path: /home/alex/workspace/Ego4d/extracted_features/clip2
+  debug_path: /home/alex/workspace/Ego4d/samples/features/debug
+  debug_mode: false
+  exclude_no_audio: false
+inference_config:
+  device: cuda
+  batch_size: 1
+  num_workers: 8
+  prefetch_factor: 2
+  fps: 30
+  frame_window: 8
+  stride: 8
+  include_audio: false
+  include_video: true
+  norm_config:
+    normalize_audio: false
+    resample_audio_rate: 16000
+    resampling_method: sinc_interpolation
+schedule_config:
+  run_locally: true
+  log_folder: slurm_log/%j
+  timeout_min: 3200
+  constraint: volta
+  slurm_partition: pixar
+  slurm_array_parallelism: 128
+  gpus_per_node: 1
+  cpus_per_task: 10
+  overhead: 1.1
+  time_per_forward_pass: 2.4
+  schedule_time_per_node: 10.0
+model_config:
+  model_name: clip
+  input_type: video
+  side_size: 224
+  crop_size: 224
+  dilation: 1
+  mean:
+  - 0.48145466
+  - 0.4578275
+  - 0.40821073
+  std:
+  - 0.26862954
+  - 0.26130258
+  - 0.27577711
+model_module_str: ego4d.features.models.clip
