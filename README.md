@@ -65,7 +65,7 @@ python3 ego4d/features/inference.py --config-name omnivore_image schedule_config
 ### Schedule The Extraction
 
 ```sh
-python3 ego4d/features/slurm.py --config-name slowfast_r101_8x8
+python3 slurm.py --config-name slowfast_r101_8x8
 ```
 
 ### As an API
@@ -80,7 +80,7 @@ Refer to `ego4d/features/extract_features.py` and the functions:
 Hydra is used for configuration. You can override configuration options through
 CLI arguments or by modifying the yaml files in the directory
 
-Pre-configured YAML files are in the subdirectory `ego4d/features/configs/`.
+Pre-configured YAML files are in the subdirectory `configs/`.
 
 There exists the following model configurations:
 1. SlowFast 8x8 ResNet101 pre-trained on Kinetics 400 (see [`slowfast_r101_8x8.yaml`](ego4d/features/configs/slowfast_r101_8x8.yaml))
@@ -99,16 +99,16 @@ Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of
 Example:
 
 ```bash
-python3 ego4d/features/slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
+python3 slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
 ```
 
 ## Adding a Model
 
 I'd recommend just copy-pasting an existing model python file.
 
-1. Add a new python file to `ego4d/features/models`
+1. Add a new python file to `models/`
 2. Ensure you have the following:
-    - ModelConfig, which must inherit from `ego4d.features.model.base_model_config.BaseModelConfig`
+    - ModelConfig, which must inherit from `model.base_model_config.BaseModelConfig`
         - Additional configuration for your model
     - get_transform(config: ModelConfig)
     - load_model(config: ModelConfig)

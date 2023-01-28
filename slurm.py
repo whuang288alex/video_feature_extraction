@@ -259,35 +259,6 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
         
     print_stats_for_videos(config, all_videos=all_videos, videos=videos)
 
-    # # ------ Compute real timeout per batch
-    # batch_vids = batch_videos(videos=videos, config=config)
-    # config.schedule_config.slurm_array_parallelism = min(
-    #     config.schedule_config.slurm_array_parallelism, len(batch_vids)
-    # )
-
-    # # ------ Schedule
-    # executor = create_executor(config.schedule_config)
-    # print_stats_for_scheduling(config, batch_vids)
-
-    # if not config.force_yes:
-    #     print(f"Time is: {datetime.datetime.now()}")
-    #     cont = input("Continue? [y/N]: ")
-    #     if cont != "y":
-    #         print("Exiting...")
-    #         sys.exit(0)
-
-    # jobs = executor.map_array(
-    #     functools.partial(perform_feature_extraction, config=config),
-    #     batch_vids,
-    # )
-    # print(f"Jobs: {jobs}")
-
-    # # TODO: display better stats in tqdm ?
-    # results = []
-    # for job in tqdm(jobs):
-    #     results.append(job.result())
-    # print_completion_stats(results)
-
     # we only support local jobs for now
     results = perform_feature_extraction(videos, config)
     print_completion_stats([results])
