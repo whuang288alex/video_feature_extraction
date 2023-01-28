@@ -124,7 +124,7 @@ class FeatureExtractConfig:
     inference_config: InferenceConfig
     schedule_config: ScheduleConfig
     model_config: BaseModelConfig
-    model_module_str: str = "ego4d.features.models.slowfast"
+    model_module_str: str = "models.slowfast"
     force_yes: bool = False
 
 
@@ -269,7 +269,7 @@ def test_load_config(config: FeatureExtractConfig):
 
 
 if __name__ == "__main__":
-    from ego4d.features.models.slowfast import ModelConfig
+    from models.slowfast import ModelConfig
 
     cs = ConfigStore.instance()
     cs.store(

@@ -2,12 +2,12 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /home/alex/workspace/Ego4d/samples/videos
+  video_dir_path: /home/alex/workspace/video_feature_extraction/samples/videos
   ego4d_download_dir: /home/alex/workspace/Ego4d/samples
   uid_list: null
   video_limit: -1
-  out_path: /home/alex/workspace/Ego4d/extracted_features/clip3
-  debug_path: /home/alex/workspace/Ego4d/samples/features/debug
+  out_path: /home/alex/workspace/video_feature_extraction/extracted_features/clip
+  debug_path: /home/alex/workspace/video_feature_extraction/samples/features/debug
   debug_mode: false
   exclude_no_audio: false
 inference_config:
@@ -50,4 +50,4 @@ model_config:
   - 0.26862954
   - 0.26130258
   - 0.27577711
-model_module_str: ego4d.features.models.clip
+model_module_str: models.clip

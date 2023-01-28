@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from typing import Tuple
 
 import torch
-from ego4d.features.config import BaseModelConfig, InferenceConfig
-from ego4d.features.models.common import ThreeCrop, Mirror
+from config import BaseModelConfig, InferenceConfig
+from models.common import ThreeCrop, Mirror
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module
 from torchvision.transforms import Compose, Lambda

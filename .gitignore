@@ -1,1 +1,4 @@
-/outputs/*
+/__pycache__/*
+/outputs/
+.vscode/
+*/__pycache__/*

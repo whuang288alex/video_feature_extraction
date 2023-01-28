@@ -3,8 +3,8 @@
 from dataclasses import dataclass
 from typing import Tuple
 
-from ego4d.features.config import BaseModelConfig, InferenceConfig
-from ego4d.features.models.common import FeedVideoInput, ThreeCrop, Mirror
+from config import BaseModelConfig, InferenceConfig
+from models.common import FeedVideoInput, ThreeCrop, Mirror
 from pytorchvideo.models.hub.vision_transformers import mvit_base_16, mvit_base_32x3
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module

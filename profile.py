@@ -9,8 +9,8 @@ from typing import List, Optional, Tuple
 
 import hydra
 import torch
-from ego4d.features.config import FeatureExtractConfig, get_videos, load_model, Video
-from ego4d.features.extract_features import extract_features, num_fvs
+from config import FeatureExtractConfig, get_videos, load_model, Video
+from extract_features import extract_features, num_fvs
 
 
 

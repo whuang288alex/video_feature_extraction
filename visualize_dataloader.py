@@ -7,9 +7,9 @@ import functools
 import random
 
 import hydra
-from ego4d.features.config import FeatureExtractConfig, get_videos, load_model
-from ego4d.features.extract_features import extract_features
-from ego4d.features.slurm import create_executor
+from config import FeatureExtractConfig, get_videos, load_model
+from extract_features import extract_features
+from slurm import create_executor
 
 
 def visualize_extraction(config: FeatureExtractConfig):
