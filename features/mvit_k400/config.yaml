@@ -1,0 +1,52 @@
+fps: 30
+force_yes: false
+io:
+  filter_completed: true
+  video_dir_path: /home/alex/workspace/video_feature_extraction/inputs/videos
+  ego4d_download_dir: /home/alex/workspace/video_feature_extraction/inputs
+  uid_list: null
+  video_limit: -1
+  out_path: /home/alex/workspace/video_feature_extraction/features/mvit_k400
+  debug_path: /home/alex/workspace/video_feature_extraction/debug
+  debug_mode: false
+  exclude_no_audio: false
+inference_config:
+  device: cuda
+  batch_size: 1
+  num_workers: 9
+  prefetch_factor: 2
+  fps: 30
+  frame_window: 32
+  stride: 16
+  include_audio: false
+  include_video: true
+  norm_config:
+    normalize_audio: false
+    resample_audio_rate: 16000
+    resampling_method: sinc_interpolation
+schedule_config:
+  run_locally: true
+  log_folder: slurm_log/%j
+  timeout_min: 720
+  constraint: volta
+  slurm_partition: pixar
+  slurm_array_parallelism: 256
+  gpus_per_node: 1
+  cpus_per_task: 10
+  overhead: 2.0
+  time_per_forward_pass: 0.8
+  schedule_time_per_node: 10.0
+model_config:
+  pretrained_dataset: k400
+  side_size: 224
+  crop_size: 224
+  dilation: 1
+  mean:
+  - 0.45
+  - 0.45
+  - 0.45
+  std:
+  - 0.225
+  - 0.225
+  - 0.225
+model_module_str: models.mvit

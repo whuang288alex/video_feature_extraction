@@ -1,4 +1,4 @@
-/outputs/
+outputs/
 .vscode/
 __pycache__/
 *.py[cod]

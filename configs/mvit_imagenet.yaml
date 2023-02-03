@@ -3,6 +3,7 @@ force_yes: false
 io:
   filter_completed: true
   video_dir_path: /home/alex/workspace/video_feature_extraction/inputs/videos
+  ego4d_download_dir: /home/alex/workspace/video_feature_extraction/inputs
   uid_list: null
   video_limit: -1
   out_path: /home/alex/workspace/video_feature_extraction/features/mvit_imagenet
