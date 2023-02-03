@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 ## Test Extraction
 
-Running a test extraction to ensure you have everything setup right:
+Run a test extraction to ensure that you have everything setup right:
 
 ```sh
 python3 profile.py --config-name slowfast_r101_8x8 schedule_config.run_locally=1
