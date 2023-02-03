@@ -39,8 +39,8 @@ python3 slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-465
 
 ## Adding a Model
 
-1. Add a new yaml file to `configs/`. Check out `configs/README` for more instructions.
-2. Add a new python file to `models/`. Check out `models/README` for more instructions.
+1. Add a new yaml file to `configs/`. Check out [configs/README](configs/README.md) for more instructions.
+2. Add a new python file to `models/`. Check out [models/README](models/README.md) for more instructions.
 3. Ensure you have the following:
     - ModelConfig, which must inherit from `model.base_model_config.BaseModelConfig`
         - Additional configuration for your model
