@@ -2,10 +2,10 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /home/alex/workspace/video_feature_extraction/samples/videos
+  video_dir_path: /home/alex/workspace/video_feature_extraction/inputs/videos
   uid_list: null
   video_limit: -1
-  out_path: /home/alex/workspace/video_feature_extraction/samples/features/mvit_imagenet
+  out_path: /home/alex/workspace/video_feature_extraction/features/mvit_imagenet
   exclude_no_audio: false
 inference_config:
   device: cuda
