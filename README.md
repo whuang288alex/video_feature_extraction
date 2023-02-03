@@ -6,9 +6,9 @@ This directory contains code to extract features from video datasets using diffe
 
 To set up the environment with conda, use the following commands:
 ```sh
-conda create --name feature_extraction
+conda create --name feature_extraction python=3.9
 conda activate feature_extraction
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ## Test Extraction
@@ -16,13 +16,13 @@ pip install -r requirements.txt
 Run a test extraction to ensure that you have everything setup right:
 
 ```sh
-python3 profile.py --config-name slowfast_r101_8x8 schedule_config.run_locally=1
+python profile.py --config-name slowfast_r101_8x8 schedule_config.run_locally=1
 ```
 
 ## Actual Extraction
 
 ```sh
-python3 slurm.py --config-name slowfast_r101_8x8
+python slurm.py --config-name slowfast_r101_8x8
 ```
 
 #### 1. To run with a different configuration
@@ -34,7 +34,7 @@ Provide `--config-name "name"`  where `"name"` is the name of the configuration 
 Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of arguments on the CLI.
 
 ```bash
-python3 slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
+python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
 ```
 
 ## Adding a Model
