@@ -11,6 +11,11 @@ conda activate feature_extraction
 python -m pip install -r requirements.txt
 ```
 
+Please ignore the following error message if it pops up.
+```sh
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+pycuda 2022.2.2 requires appdirs>=1.4.0, which is not installed.
+```
 ## Test Extraction
 
 Run a test extraction to ensure that you have everything setup right:
