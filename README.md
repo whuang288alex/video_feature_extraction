@@ -46,3 +46,7 @@ python3 slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-465
         - Additional configuration for your model
     - get_transform(config: ModelConfig)
     - load_model(config: ModelConfig)
+
+## Acknowledgement
+
+This directory is built on top of the <a href = "https://github.com/facebookresearch/Ego4d"> Ego4d<a> directory
