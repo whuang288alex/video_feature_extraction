@@ -25,23 +25,14 @@ pycuda 2022.2.2 requires appdirs>=1.4.0, which is not installed.
 ```
 ## Directory setup
 
-- ` Configs/`: this is the directory where you store configuration files that define different runtime settings
+- ` configs/`: this is the directory where you store configuration files that define different runtime settings
 - ` models/`: this is the directory where you implement the models you use for feature extraction.
 - ` inputs/`: this is the default directory where you store the input videos.
 - ` features/`: this is the default directory where you store the features you extract.
 
-##### IMPORTANT: Before running the test/actual extraction, make sure you have changed the file paths in `configs/*.yaml` to the file paths on your own machine.
+## Feature Extraction
 
-## Test Extraction
-
-Run a test extraction to ensure that you have everything setup right:
-
-
-```sh
-python profile.py --config-name slowfast_r101_8x8 schedule_config.run_locally=1
-```
-
-## Actual Extraction
+##### IMPORTANT: Make sure you have changed the file paths in `configs/*.yaml` to the file paths on your own machine.
 
 ```sh
 python slurm.py --config-name slowfast_r101_8x8
