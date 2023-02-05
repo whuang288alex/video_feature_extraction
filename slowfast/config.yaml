@@ -23,7 +23,7 @@ inference_config:
   norm_config:
     normalize_audio: false
     resample_audio_rate: 16000
-    resampling_method: "sinc_interpolation"
+    resampling_method: sinc_interpolation
 schedule_config:
   run_locally: true
   log_folder: slurm_log/%j
@@ -41,7 +41,7 @@ model_config:
   hub_path: slowfast_r101
   slowfast_alpha: 4
   side_size: 288
-  dilation: 2       # this is the sampling rate in SlowFast
+  dilation: 2
   mean:
   - 0.45
   - 0.45
