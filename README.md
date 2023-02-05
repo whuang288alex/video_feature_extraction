@@ -4,6 +4,14 @@ This directory contains code to extract features from video datasets using diffe
 
 ## Requirements
 
+To install conda on your remote Linux server, use the following commands:
+```sh
+cd /tmp
+curl -O https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
+bash Anaconda3-2022.10-Linux-x86_64.sh
+source ~/.bashrc
+```
+
 To set up the environment with conda, use the following commands:
 ```sh
 conda create --name feature_extraction python=3.9
