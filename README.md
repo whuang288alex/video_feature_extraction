@@ -4,6 +4,14 @@ This directory contains code to extract features from video datasets using diffe
 
 ## Requirements
 
+To install conda on your remote Linux server, use the following commands:
+```sh
+cd /tmp
+curl -O https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
+bash Anaconda3-2022.10-Linux-x86_64.sh
+source ~/.bashrc
+```
+
 To set up the environment with conda, use the following commands:
 ```sh
 conda create --name feature_extraction python=3.9
@@ -16,9 +24,19 @@ Please ignore the following error message if it pops up.
 ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
 pycuda 2022.2.2 requires appdirs>=1.4.0, which is not installed.
 ```
+## Directory setup
+
+- ` Configs/`: this is the directory where you store configuration files that define different runtime settings
+- ` models/`: this is the directory where you implement the models you use for feature extraction.
+- ` inputs/`: this is the default directory where you store the input videos.
+- ` features/`: this is the default directory where you store the features you extract.
+
+##### IMPORTANT: Before running the test/actual extraction, make sure you have changed the file paths in `configs/*.yaml` to the file paths on your own machine.
+
 ## Test Extraction
 
 Run a test extraction to ensure that you have everything setup right:
+
 
 ```sh
 python profile.py --config-name slowfast_r101_8x8 schedule_config.run_locally=1
