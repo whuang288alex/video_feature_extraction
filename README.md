@@ -7,9 +7,8 @@ This directory contains code to extract features from video datasets using diffe
 To install conda on your remote Linux server, use the following commands:
 ```sh
 cd /tmp
-curl -O https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
-bash Anaconda3-2022.10-Linux-x86_64.sh
-source ~/.bashrc
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
 To set up the environment with conda, use the following commands:
