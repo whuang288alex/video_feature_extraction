@@ -244,6 +244,13 @@ def create_executor(config: ScheduleConfig):
 
 @hydra.main(config_path="configs", config_name=None)
 def schedule_feature_extraction(config: FeatureExtractConfig):
+    
+    # make file path relative
+    config.io.video_dir_path = os.path.dirname(os.path.abspath(__file__)) + config.io.video_dir_path
+    config.io.ego4d_download_dir = os.path.dirname(os.path.abspath(__file__)) + config.io.ego4d_download_dir
+    config.io.out_path = os.path.dirname(os.path.abspath(__file__)) + config.io.out_path
+    config.io.debug_path = os.path.dirname(os.path.abspath(__file__)) + config.io.debug_path
+    
     os.makedirs(config.io.out_path, exist_ok=True)
     print("###################### Feature Extraction Config ####################")
     print(OmegaConf.to_yaml(config))

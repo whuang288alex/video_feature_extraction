@@ -1,21 +1,18 @@
 universe = vanilla
-log = extract_feature_$(Cluster).log
+log = log_$(Cluster).log
 
-executable = extract_feature.sh
-arguments = $(Process)
+executable = run_extraction.sh
+arguments = $(config)
 output = output_$(Cluster)_$(Process).out
 error = error_$(Cluster)_$(Process).err
 
-
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = print_file.py, job1.txt, job0.txt, job1.txt, job2.txt, job3.txt, job4.txt, job5.txt, job6.txt
-
+transfer_input_files = feature_extraction.tar.gz, code.tar.gz
 
 request_cpus = 1
 request_memory = 1GB
-request_disk = 1MB
-
+request_disk = 1GB
 
 # Tell HTCondor to run 3 instances of our job:
-queue 7
+queue config from cmd.txt

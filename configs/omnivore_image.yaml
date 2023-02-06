@@ -2,12 +2,12 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /home/alex/workspace/video_feature_extraction/inputs/videos
-  ego4d_download_dir: /home/alex/workspace/video_feature_extraction/inputs
+  video_dir_path: /inputs/videos
+  ego4d_download_dir: /inputs
   uid_list: null
   video_limit: -1
   exclude_no_audio: false
-  out_path: /home/alex/workspace/video_feature_extraction/features/omnivore_image
+  out_path: /features/omnivore_image
 inference_config:
   device: cuda
   batch_size: 1
