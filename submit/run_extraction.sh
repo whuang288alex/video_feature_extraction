@@ -14,4 +14,4 @@ tar -xzf $ENVNAME.tar.gz -C $ENVDIR
 tar -xzf code.tar.gz
 
 # modify this line to run your desired Python script and any other work you need to do
-python slurm.py --config-name $1
+timeout 4h python slurm.py --config-name $1
