@@ -1,10 +1,11 @@
 ## TODOs before submission
 
-- To pach the environments:
+- To pack the environments:
     - `conda activate base`
     - `conda pack -n feature_extraction`
     - `chmod 644 feature_extraction.tar.gz`
-- To pack your codes: `tar -zcvf code.tar.gz slurm.py config.py dataset.py extract_features.py configs/ features/ inputs models/`
+- To pack your codes
+    - `tar -zcvf code.tar.gz slurm.py config.py dataset.py extract_features.py configs/ features/ inputs models/`
 
 ## Useful Condor commands
 

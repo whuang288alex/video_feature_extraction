@@ -17,22 +17,15 @@ conda create --name feature_extraction python=3.9
 conda activate feature_extraction
 python -m pip install -r requirements.txt
 ```
+## Structure of the Repository
 
-Please ignore the following error message if it pops up.
-```sh
-ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-pycuda 2022.2.2 requires appdirs>=1.4.0, which is not installed.
-```
-## Directory setup
-
-- ` configs/`: this is the directory where you store configuration files that define different runtime settings
+- ` configs/`: this directory contains configuration files that define different runtime settings
 - ` models/`: this is the directory where you implement the models you use for feature extraction.
 - ` inputs/`: this is the default directory where you store the input videos.
 - ` features/`: this is the default directory where you store the features you extract.
+- ` submit/`: this directory contains the code to submit computation to CHTC for throughput computing
 
 ## Feature Extraction
-
-##### IMPORTANT: Make sure you have changed the file paths in `configs/*.yaml` to the file paths on your own machine.
 
 ```sh
 python slurm.py --config-name slowfast_r101_8x8
@@ -54,11 +47,6 @@ python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650
 
 1. Add a new yaml file to `configs/`. Check out [configs/README](configs/README.md) for more instructions.
 2. Add a new python file to `models/`. Check out [models/README](models/README.md) for more instructions.
-3. Ensure you have the following:
-    - ModelConfig, which must inherit from `model.base_model_config.BaseModelConfig`
-        - Additional configuration for your model
-    - get_transform(config: ModelConfig)
-    - load_model(config: ModelConfig)
 
 ## Acknowledgement
 
