@@ -7,6 +7,9 @@
 - To pack your codes
     - `tar -zcvf code.tar.gz slurm.py config.py dataset.py extract_features.py configs/ features/ inputs models/`
 
+- To move those to staging directory:
+    - `mv feature_extraction.tar.gz code.tar.gz /staging/groups/li_group_biostats`
+
 ## Useful Condor commands
 
 - To submit files: `condor_submit run_extraction.sub`

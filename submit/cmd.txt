@@ -1,1 +1,1 @@
-slowfast_r101_8x8 
+egovlp

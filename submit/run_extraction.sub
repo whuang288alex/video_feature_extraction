@@ -1,18 +1,21 @@
 universe = vanilla
 log = log_$(Cluster).log
-
-executable = run_extraction.sh
-arguments = $(config)
 output = output_$(Cluster)_$(Process).out
 error = error_$(Cluster)_$(Process).err
 
+executable = run_extraction.sh
+arguments = $(config)
+
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = feature_extraction.tar.gz, code.tar.gz
 
+request_gpus = 1
 request_cpus = 1
 request_memory = 1GB
 request_disk = 1GB
++WantGPULab = true
++GPUJobLength = "short"
++is_resumable = true
 
 # Tell HTCondor to run 3 instances of our job:
 queue config from cmd.txt
