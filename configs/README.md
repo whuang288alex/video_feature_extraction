@@ -1,18 +1,19 @@
 # Adding a config
 
-- fps: 30
-- video_dir_path: /inputs/videos
-- out_path: /features/slowfast
-- batch_size: 1
-- num_workers: 8
-- frame_window: 32
-- stride: 8
-- run_locally: true
-- gpus_per_node: 1
-- cpus_per_task: 10
-- hub_path: slowfast_r101
-- side_size: 288
-- dilation: 2 
-- mean:
-- std:
-- model_module_str: models.slowfast
+<b>Note: </b> here, a  video is divided into multiple "clips", and each "clip" is treated as a feature of the video
+
+- fps: The number of frames per second in the input video
+- video_dir_path: The path where the input video is stored
+- out_path: The path where the extraced features will be stored
+- batch_size: ?
+- num_workers: ?
+- frame_window: The number of frames in a clip 
+- stride: The number of frames between the first frame of two neighboring clips
+- run_locally: ?
+- gpus_per_node: ?
+- cpus_per_task: ?
+- hub_path: ?
+- side_size: ?
+- dilation: ?
+- mean & std: the mean and  standard deviation used for standardizing input, should be the same as the one used when traning the original model
+- model_module_str: the python file location

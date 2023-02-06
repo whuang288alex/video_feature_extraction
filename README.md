@@ -19,11 +19,16 @@ python -m pip install -r requirements.txt
 ```
 ## Structure of the Repository
 
-- ` configs/`: this directory contains configuration files that define different runtime settings
-- ` models/`: this is the directory where you implement the models you use for feature extraction.
-- ` inputs/`: this is the default directory where you store the input videos.
-- ` features/`: this is the default directory where you store the features you extract.
-- ` submit/`: this directory contains the code to submit computation to CHTC for throughput computing
+- ` configs/`
+    - This directory contains configuration files that define different runtime settings
+- ` models/`
+    - This is the directory where you implement the models you use for feature extraction.
+- ` inputs/`
+    - This is the default directory where you store the input videos.
+- ` features/`
+    - This is the default directory where you store the features you extract.
+- ` submit/`
+    - This directory contains the code to submit computation to CHTC for throughput computing
 
 ## Feature Extraction
 

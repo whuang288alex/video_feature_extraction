@@ -52,25 +52,6 @@ def load_model(
     model = WrapModel(model)
     model = model.eval()
     return model
-
-# class PackPathway(torch.nn.Module):
-#     """
-#     Transform for converting video frames as a list of tensors.
-#     """
-#     def __init__(self, clip_to_image):
-#         super().__init__()
-#         self.clip_to_image = clip_to_image
-
-#     def forward(self, frames: torch.Tensor):
-#         # Perform temporal sampling from the fast pathway.
-#         images = torch.index_select(
-#             frames,
-#             -3,
-#             torch.linspace(
-#                 0, frames.shape[-3] - 1, frames.shape[-3] // self.clip_to_image
-#             ).long(),
-#         )
-#         return images
     
 def get_transform(inference_config: InferenceConfig, config: ModelConfig):
     assert config.input_type == "video"
