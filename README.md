@@ -17,12 +17,6 @@ conda create --name feature_extraction python=3.9
 conda activate feature_extraction
 python -m pip install -r requirements.txt
 ```
-
-Please ignore the following error message if it pops up.
-```sh
-ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-pycuda 2022.2.2 requires appdirs>=1.4.0, which is not installed.
-```
 ## Directory setup
 
 - ` configs/`: this is the directory where you store configuration files that define different runtime settings
@@ -31,8 +25,6 @@ pycuda 2022.2.2 requires appdirs>=1.4.0, which is not installed.
 - ` features/`: this is the default directory where you store the features you extract.
 
 ## Feature Extraction
-
-##### IMPORTANT: Make sure you have changed the file paths in `configs/*.yaml` to the file paths on your own machine.
 
 ```sh
 python slurm.py --config-name slowfast_r101_8x8
