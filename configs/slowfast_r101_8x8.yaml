@@ -6,7 +6,7 @@ io:
   ego4d_download_dir: /inputs
   uid_list: null
   video_limit: -1
-  out_path: features/slowfast
+  out_path: /features/slowfast
   debug_path: /debug
   debug_mode: false
   exclude_no_audio: false
