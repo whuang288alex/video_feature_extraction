@@ -2,3 +2,4 @@ outputs/
 .vscode/
 __pycache__/
 *.py[cod]
+submit/*.tar.gz
