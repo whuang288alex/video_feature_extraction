@@ -17,7 +17,7 @@ conda create --name feature_extraction python=3.9
 conda activate feature_extraction
 python -m pip install -r requirements.txt
 ```
-## Directory setup
+## Structure of the Repository
 
 - ` configs/`: this is the directory where you store configuration files that define different runtime settings
 - ` models/`: this is the directory where you implement the models you use for feature extraction.
