@@ -13,4 +13,4 @@
   - ThreeCrop
 
 - Access to the weights from pretrained models
-  -https://drive.google.com/drive/folders/1Qe_9XLUJELB69gYwSpAo1DU3yZ64BOpg
+  - https://drive.google.com/drive/folders/1Qe_9XLUJELB69gYwSpAo1DU3yZ64BOpg
