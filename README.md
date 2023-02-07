@@ -38,11 +38,15 @@ python slurm.py --config-name slowfast_r101_8x8
 
 #### 1. To run with a different configuration
 
-Provide `--config-name "name"`  where `"name"` is the name of the configuration file without the `.yaml` extension.
+Provide `--config-name "name"`  where `"name"` is the name of the configuration file without the `.yaml` extension. For example, to run the CLIP model:
+
+```bash
+python slurm.py --config-name clip
+```
 
 #### 2. To run on a subset of videos
 
-Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of arguments on the CLI.
+Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of arguments on the CLI:
 
 ```bash
 python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"

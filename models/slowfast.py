@@ -46,6 +46,7 @@ def load_model(
         model = None
     else:
         assert config.hub_path is not None
+        print("Loading slowfast")
         model = torch.hub.load(
             "facebookresearch/pytorchvideo", config.hub_path, pretrained=True
         )
