@@ -5,7 +5,7 @@
     - `conda pack -n feature_extraction`
     - `chmod 644 feature_extraction.tar.gz`
 - To pack your codes
-    - `tar -zcvf code.tar.gz slurm.py config.py dataset.py extract_features.py configs/ features/ inputs models/`
+    - `tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../configs/ ../features/ ../inputs/ ../models/`
 
 - To move those to staging directory:
     - `mv feature_extraction.tar.gz code.tar.gz /staging/groups/li_group_biostats`

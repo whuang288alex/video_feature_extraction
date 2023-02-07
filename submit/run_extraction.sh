@@ -1,19 +1,25 @@
 #!/bin/bash
 
 # have job exit if any command returns with non-zero exit status
-set -e
-ENVNAME=feature_extraction
-ENVDIR=$ENVNAME
+# set -e
+# ENVNAME=feature_extraction
+# ENVDIR=$ENVNAME
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+sh Miniconda3-latest-Linux-x86_64.sh
+
+conda create --name feature_extraction python=3.9
+conda activate feature_extraction
+python -m pip install -r requirements.txt
 
 # get input files from staging directory
+# cp /staging/groups/li_group_biostats/feature_extraction.tar.gz ./
 cp /staging/groups/li_group_biostats/code.tar.gz ./
-cp /staging/groups/li_group_biostats/feature_extraction.tar.gz ./
 
 # these lines handle setting up the environment; you shouldn't have to modify them
-export PATH
-mkdir $ENVDIR
-tar -xzf $ENVNAME.tar.gz -C $ENVDIR
-. $ENVDIR/bin/activate
+# export PATH
+# mkdir $ENVDIR
+# tar -xzf $ENVNAME.tar.gz -C $ENVDIR
+# . $ENVDIR/bin/activate
 
 # extract codes from the tar file
 tar -xzf code.tar.gz
