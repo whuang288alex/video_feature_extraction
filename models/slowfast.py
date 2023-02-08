@@ -11,6 +11,7 @@ from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module
 from torchvision.transforms import Compose, Lambda
 from torchvision.transforms._transforms_video import NormalizeVideo
+from .slowfast_arch import build_slowfast
 
 
 @dataclass
@@ -47,9 +48,13 @@ def load_model(
     else:
         assert config.hub_path is not None
         print("Loading slowfast")
-        model = torch.hub.load(
-            "facebookresearch/pytorchvideo", config.hub_path, pretrained=True
-        )
+        model = build_slowfast(config.hub_path)
+        
+        # Not available while using CHTC
+        #
+        # model = torch.hub.load(
+        #     "facebookresearch/pytorchvideo", config.hub_path, pretrained=True
+        # )
 
     assert model is not None
 
