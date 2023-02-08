@@ -48,8 +48,7 @@ def load_model(
 ) -> Module:
     assert config.hub_path is not None
     model = load(config.hub_path, device = InferenceConfig.device)
-    model = model.encode_image
-    
+    model, temp = model.encode_image
     model = WrapModel(model)
     model = model.eval()
     return model
