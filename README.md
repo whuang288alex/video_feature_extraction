@@ -41,7 +41,7 @@ python slurm.py --config-name slowfast_r101_8x8
 Provide `--config-name "name"`  where `"name"` is the name of the configuration file without the `.yaml` extension. For example, to run the CLIP model:
 
 ```bash
-python slurm.py --config-name clip
+python slurm.py --config-name clip_vit_b_32
 ```
 
 #### 2. To run on a subset of videos

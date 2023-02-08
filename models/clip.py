@@ -46,9 +46,8 @@ def load_model(
     config: ModelConfig,
     patch_final_layer: bool = True,
 ) -> Module:
-    # model, preprocess = clip.load("ViT-B/32", device = InferenceConfig.device)
-    # model = model.encode_image
-    model = load("ViT-B-32", device = InferenceConfig.device)
+    assert config.hub_path is not None
+    model = load(config.hub_path, device = InferenceConfig.device)
     model = model.encode_image
     
     model = WrapModel(model)
