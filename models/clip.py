@@ -11,6 +11,7 @@ from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module
 from torchvision.transforms import Compose, Lambda
 from torchvision.transforms._transforms_video import CenterCropVideo, NormalizeVideo
+from .clip_arch import load
 
 @dataclass
 class ModelConfig(BaseModelConfig):
@@ -45,8 +46,11 @@ def load_model(
     config: ModelConfig,
     patch_final_layer: bool = True,
 ) -> Module:
-    model, preprocess = clip.load("ViT-B/32", device = InferenceConfig.device)
+    # model, preprocess = clip.load("ViT-B/32", device = InferenceConfig.device)
+    # model = model.encode_image
+    model, preprocess = load("ViT-B/32", device = InferenceConfig.device)
     model = model.encode_image
+    
     model = WrapModel(model)
     model = model.eval()
     return model
