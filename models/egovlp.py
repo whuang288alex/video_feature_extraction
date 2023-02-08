@@ -9,7 +9,7 @@ from models.common import FeedVideoInput, ThreeCrop, Mirror
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Module
 from torchvision.transforms import Compose, Lambda
-from torchvision.transforms._transforms_video import NormalizeVideo
+from torchvision.transforms._transforms_video import CenterCropVideo, NormalizeVideo
 
 from .egovlp_arch import build_egovlp
 
@@ -47,9 +47,18 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
         Lambda(lambda x: x / 255.0),
         NormalizeVideo(config.mean, config.std),
         ShortSideScale(size=config.side_size),
-        ThreeCrop(config.crop_size),
-        Mirror(),
     ]
+    
+    if config.center_crop:
+        transforms.append(CenterCropVideo(config.crop_size))
+    elif config.three_crop:
+        transforms.append(ThreeCrop(config.crop_size))
+    else :
+        raise ValueError('Need to either use center crop or three crop')
+
+    if config.mirror:
+        transforms.append(Mirror())
+        
     return Compose(
         [
             ApplyTransformToKey(

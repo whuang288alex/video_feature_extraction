@@ -5,11 +5,11 @@ from typing import Tuple
 
 import torch
 from config import BaseModelConfig, InferenceConfig
-from models.common import FeedVideoInput, Mirror
+from models.common import FeedVideoInput, ThreeCrop, Mirror
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module
 from torchvision.transforms import Compose, Lambda
-from torchvision.transforms._transforms_video import NormalizeVideo
+from torchvision.transforms._transforms_video import  CenterCropVideo, NormalizeVideo
 
 from .i3d_arch import build_i3d
 
@@ -51,8 +51,16 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
         Lambda(lambda x: x / 255.0),
         NormalizeVideo(config.mean, config.std),
         ShortSideScale(size=config.side_size),
-        Mirror(),
     ]
+    
+    if config.center_crop:
+        transforms.append(CenterCropVideo(config.crop_size))
+    elif config.three_crop:
+        transforms.append(ThreeCrop(config.crop_size))
+
+    if config.mirror:
+        transforms.append(Mirror())
+        
     return Compose(
         [
             ApplyTransformToKey(

@@ -113,15 +113,10 @@ class ScheduleConfig:
     schedule_time_per_node: float = 10
 
 @dataclass
-class TransformConfig:
+class BaseModelConfig:
     center_crop = False
     three_crop = False
     mirror = False
-    
-
-@dataclass
-class BaseModelConfig:
-    pass
 
 
 @dataclass(order=True)
@@ -130,7 +125,6 @@ class FeatureExtractConfig:
     inference_config: InferenceConfig
     schedule_config: ScheduleConfig
     model_config: BaseModelConfig
-    
     model_module_str: str = ""
     force_yes: bool = False
 
