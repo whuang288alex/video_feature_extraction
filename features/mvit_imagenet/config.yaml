@@ -7,6 +7,7 @@ io:
   uid_list: null
   video_limit: -1
   out_path: /home/alex/workspace/video_feature_extraction/features/mvit_imagenet
+  debug_path: /home/alex/workspace/video_feature_extraction/debug
   exclude_no_audio: false
 inference_config:
   device: cuda
@@ -47,4 +48,7 @@ model_config:
   - 0.229
   - 0.224
   - 0.225
+  center_crop: false
+  three_crop: true
+  mirror: true
 model_module_str: models.mvit

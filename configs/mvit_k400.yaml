@@ -49,4 +49,7 @@ model_config:
   - 0.225
   - 0.225
   - 0.225
+  center_crop: false
+  three_crop: true
+  mirror: true
 model_module_str: models.mvit

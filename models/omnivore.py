@@ -9,7 +9,7 @@ from models.common import ThreeCrop, Mirror
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module
 from torchvision.transforms import Compose, Lambda
-from torchvision.transforms._transforms_video import NormalizeVideo
+from torchvision.transforms._transforms_video import CenterCropVideo, NormalizeVideo
 
 
 @dataclass
@@ -69,9 +69,15 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
         Lambda(lambda x: x / 255.0),
         NormalizeVideo(config.mean, config.std),
         ShortSideScale(size=config.side_size),
-        ThreeCrop(config.crop_size),
-        Mirror(),
     ]
+    
+    if config.center_crop:
+        transforms.append(CenterCropVideo(config.crop_size))
+    elif config.three_crop:
+        transforms.append(ThreeCrop(config.crop_size))
+    
+    if config.mirror:
+        transforms.append(Mirror())
     
     return ApplyTransformToKey(
         key="video",

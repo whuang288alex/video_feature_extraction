@@ -49,12 +49,6 @@ def load_model(
         assert config.hub_path is not None
         print("Loading slowfast")
         model = build_slowfast(config.hub_path)
-        
-        # Not available while using CHTC
-        #
-        # model = torch.hub.load(
-        #     "facebookresearch/pytorchvideo", config.hub_path, pretrained=True
-        # )
 
     assert model is not None
 
@@ -97,16 +91,20 @@ class PackPathway(torch.nn.Module):
         return frame_list
 
 def get_transform(inference_config: InferenceConfig, config: ModelConfig):
+    
+    transforms = [
+        Lambda(lambda x: x[:, ::config.dilation]),
+        Lambda(lambda x: x / 255.0),
+        NormalizeVideo(config.mean, config.std),
+        ShortSideScale(size=config.side_size),
+    ]
+    
+    if config.mirror:
+        transforms.append(Mirror())
+        
+    transforms.append(PackPathway(config.slowfast_alpha))
+    
     return ApplyTransformToKey(
         key="video",
-        transform=Compose(
-            [
-                Lambda(lambda x: x[:, ::config.dilation]),
-                Lambda(lambda x: x / 255.0),
-                NormalizeVideo(config.mean, config.std),
-                ShortSideScale(size=config.side_size),
-                Mirror(),   # include horizontal flip
-                PackPathway(config.slowfast_alpha),
-            ]
-        ),
+        transform=Compose(transforms),
     )

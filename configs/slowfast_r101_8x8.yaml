@@ -50,4 +50,5 @@ model_config:
   - 0.225
   - 0.225
   - 0.225
+  mirror: true
 model_module_str: models.slowfast
