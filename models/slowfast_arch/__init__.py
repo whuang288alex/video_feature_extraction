@@ -7,7 +7,7 @@ from pytorchvideo.models.slowfast import create_slowfast, create_slowfast_with_r
 from torch.hub import load_state_dict_from_url
 
 
-root_dir = os.path.join(os.path.dirname(__file__) + 'assets')
+root_dir = os.path.join(os.path.dirname(__file__), 'assets')
 checkpoint_paths = {
     "slowfast_r50": os.path.join(root_dir, "SLOWFAST_8x8_R50.pyth"),
     "slowfast_r50_detection": os.path.join(root_dir, "SLOWFAST_8x8_R50_DETECTION.pyth"),

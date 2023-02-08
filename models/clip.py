@@ -48,7 +48,7 @@ def load_model(
 ) -> Module:
     # model, preprocess = clip.load("ViT-B/32", device = InferenceConfig.device)
     # model = model.encode_image
-    model, preprocess = load("ViT-B/32", device = InferenceConfig.device)
+    model = load("ViT-B-32", device = InferenceConfig.device)
     model = model.encode_image
     
     model = WrapModel(model)
