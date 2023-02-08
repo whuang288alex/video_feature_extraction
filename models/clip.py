@@ -47,10 +47,9 @@ def load_model(
     patch_final_layer: bool = True,
 ) -> Module:
     assert config.hub_path is not None
-    model = load(config.hub_path, device = InferenceConfig.device)
-    model, temp = model.encode_image
+    model = load(config.hub_path, device = InferenceConfig.device).encode_image
     model = WrapModel(model)
-    model = model.eval()
+    model.eval()
     return model
     
 def get_transform(inference_config: InferenceConfig, config: ModelConfig):
