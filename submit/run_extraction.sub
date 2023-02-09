@@ -11,13 +11,11 @@ when_to_transfer_output = ON_EXIT
 
 request_gpus = 1
 request_cpus = 1
-request_memory = 1GB
-request_disk = 5GB
+request_memory = 10GB
+request_disk = 30GB
 
 +WantGPULab = true
 +GPUJobLength = "short"
-+is_resumable = true
-require_gpus = (Capability > 7.5)
-Requirements = (Target.CUDADriverVersion >= 10.2)
+require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
 
 queue config from cmd.txt
