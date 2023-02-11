@@ -24,3 +24,4 @@ python slurm.py --config-name $1
 rm code.tar.gz feature_extraction.tar.gz
 mkdir code
 mv ./*.py ./code
+mv ./features/*/*.pt ./

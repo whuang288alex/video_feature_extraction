@@ -16,7 +16,7 @@ request_disk = 30GB
 
 +WantGPULab = true
 +GPUJobLength = "short"
-requirements = (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
+requirements =  (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
 require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
 
 queue config from cmd.txt
