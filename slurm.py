@@ -271,6 +271,4 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
     print_completion_stats([results])
 
 if __name__ == "__main__":
-    # import ssl
-    # ssl._create_default_https_context = ssl._create_unverified_context
     schedule_feature_extraction()

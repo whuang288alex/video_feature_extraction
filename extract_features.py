@@ -87,7 +87,7 @@ def _extract_features(
     device = config.inference_config.device
 
     data = create_data_loader_or_dset(videos, config)
-
+    
     if not silent:
         print(f"extracting from {videos}")
 
