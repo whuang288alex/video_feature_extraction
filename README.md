@@ -32,6 +32,7 @@ python -m pip install -r requirements.txt
 
 ## Feature Extraction
 
+
 ```sh
 python slurm.py --config-name slowfast_r101_8x8
 ```
@@ -43,6 +44,13 @@ Provide `--config-name "name"`  where `"name"` is the name of the configuration 
 ```bash
 python slurm.py --config-name clip_vit_b_32
 ```
+
+</br>
+
+NOTE: for some models, you are REQUIRED to manually download pretrained models for the code to start working. Please refer to [models/README](models/README.md) for more info.
+
+</br>
+
 
 #### 2. To run on a subset of videos
 

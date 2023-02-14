@@ -46,8 +46,29 @@ def load_model(
     config: ModelConfig,
     patch_final_layer: bool = True,
 ) -> Module:
+    
     assert config.hub_path is not None
-    model = load(config.hub_path, device = InferenceConfig.device).encode_image
+    
+    if config.use_remote:
+        print("Loading remote clip...")
+        path = str(config.hub_path)
+        
+        # change the path name to the remote naming convention
+        if path == "ViT-B-16":
+            path = "ViT-B/16"
+        elif path == "ViT-B-32":
+            path = "ViT-B/32"
+        elif path == "ViT-L-14":
+            path = "ViT-L/14"
+        elif path == "ViT-L-14-336px":
+            path = "ViT-L/14@336px"
+            
+        model, preprocess = clip.load(path, device = InferenceConfig.device)
+    else:
+        print("Loading local clip...")
+        model = load(config.hub_path, device = InferenceConfig.device)
+    
+    model = model.encode_image
     model = WrapModel(model)
     model.eval()
     return model

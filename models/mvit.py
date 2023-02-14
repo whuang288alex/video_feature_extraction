@@ -29,14 +29,13 @@ def load_model(
     config: ModelConfig,
     patch_final_layer: bool = True,
 ) -> Module:
-    assert config.pretrained_dataset in ("k400", "imagenet")
-    if config.pretrained_dataset == "k400":
-        print("Loading K400 MViT")
-        model = mvit_base_32x3(pretrained=True)
-    else:
-        print("Loading ImageNet MViT")
-        model = mvit_base_16(pretrained=True)
-
+    
+    if config.use_remote:
+        assert config.pretrained_dataset in ("k400")
+        if config.pretrained_dataset == "k400":
+            print("Loading remote K400 MViT")
+            model = mvit_base_32x3(pretrained=True)
+        
     assert model is not None
 
     if patch_final_layer:

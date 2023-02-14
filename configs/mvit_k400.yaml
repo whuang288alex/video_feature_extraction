@@ -38,6 +38,7 @@ schedule_config:
   schedule_time_per_node: 10.0
 model_config:
   pretrained_dataset: "k400"
+  use_remote: true
   side_size: 224
   crop_size: 224
   dilation: 1

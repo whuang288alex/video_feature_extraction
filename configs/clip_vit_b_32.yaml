@@ -16,8 +16,8 @@ inference_config:
   num_workers: 8
   prefetch_factor: 2
   fps: 30
-  frame_window: 8  # number of frame in a clip 
-  stride: 8        # number of frame stride between two neighboring clip
+  frame_window: 8  
+  stride: 8        
   include_audio: false
   include_video: true
   norm_config:
@@ -37,6 +37,7 @@ schedule_config:
   time_per_forward_pass: 2.4
   schedule_time_per_node: 10.0
 model_config:
+  use_remote: true
   hub_path: ViT-B-32
   model_name: "clip"
   input_type: "video"

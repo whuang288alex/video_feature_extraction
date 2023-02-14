@@ -37,6 +37,7 @@ schedule_config:
   time_per_forward_pass: 2.4
   schedule_time_per_node: 10.0
 model_config:
+  use_remote: true
   model_path: null
   hub_path: slowfast_r101
   slowfast_alpha: 4
@@ -50,5 +51,5 @@ model_config:
   - 0.225
   - 0.225
   - 0.225
-  mirror: false
+  mirror: true
 model_module_str: models.slowfast

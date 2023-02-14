@@ -48,7 +48,10 @@ def load_model(
     config: ModelConfig,
     patch_final_layer: bool = True,
 ) -> Module:
-    model = torch.hub.load("facebookresearch/omnivore", model=config.model_name)
+    
+    if config.use_remote:
+        print("Loading remote Omnivore")
+        model = torch.hub.load("facebookresearch/omnivore", model=config.model_name)
 
     if patch_final_layer:
         model.heads.image = Identity()

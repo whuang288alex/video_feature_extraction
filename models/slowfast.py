@@ -46,9 +46,16 @@ def load_model(
         raise AssertionError("not supported yet")
         model = None
     else:
-        assert config.hub_path is not None
-        print("Loading slowfast")
-        model = build_slowfast(config.hub_path)
+        if config.use_remote:
+            assert config.hub_path is not None
+            print("Loading remote slowfast...")
+            model = torch.hub.load(
+                "facebookresearch/pytorchvideo", config.hub_path, pretrained=True
+            )
+        else:
+            assert config.hub_path is not None
+            print("Loading local slowfast ...")
+            model = build_slowfast(config.hub_path)
 
     assert model is not None
 
