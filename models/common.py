@@ -50,7 +50,6 @@ class FeedVideoInputList(Module):
 
 
 class Mirror:
-
     def __call__(self, im):
         if im.ndim == 4:
             im = torch.stack([im, torch.flip(im, dims=(-1,))])
@@ -58,7 +57,6 @@ class Mirror:
             im = torch.cat([im, torch.flip(im, dims=(-1,))])
         else:
             raise ValueError()
-
         return im
 
 

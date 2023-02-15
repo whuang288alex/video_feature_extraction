@@ -2,15 +2,18 @@
 
 from dataclasses import dataclass
 from typing import Tuple
+import os
 
 import torch
 from config import BaseModelConfig, InferenceConfig
 from models.common import FeedVideoInput, ThreeCrop, Mirror
+from torchvision.transforms import (
+    Compose, Resize, CenterCrop, FiveCrop, TenCrop, Lambda
+) 
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module
-from torchvision.transforms import Compose, Lambda
 from torchvision.transforms._transforms_video import  CenterCropVideo, NormalizeVideo
-
+from .c3d_arch import build_c3d, load_mean
 
 @dataclass
 class ModelConfig(BaseModelConfig):
@@ -28,14 +31,11 @@ def load_model(
     config: ModelConfig,
     patch_final_layer: bool = True,
 ) -> Module:
-    print("Loading I3D")    # takes RGB / XY input
-    model = build_i3d(pretrained=config.pretrained_dataset)
-
+    
+    print("Loading C3D")    # takes RGB / XY input
+    model = build_c3d(config.pretrained_dataset)
     assert model is not None
-
-    if patch_final_layer:
-        model.logits = Identity()
-
+    
     # Set to GPU or CPU
     model = FeedVideoInput(model)
     model = model.eval()
@@ -44,18 +44,36 @@ def load_model(
 
 
 def get_transform(inference_config: InferenceConfig, config: ModelConfig):
+    
+    mean = load_mean(config.pretrained_dataset)
+    assert mean is not None
+    mean = mean.cpu()
+    
     transforms = [
         Lambda(lambda x: x[:, ::config.dilation]),
         Lambda(lambda x: x / 255.0),
-        NormalizeVideo(config.mean, config.std),
+        # NormalizeVideo(config.mean, config.std),
         ShortSideScale(size=config.side_size),
     ]
     
-    if config.center_crop:
-        transforms.append(CenterCropVideo(config.crop_size))
-    elif config.three_crop:
-        transforms.append(ThreeCrop(config.crop_size))
-
+    # handle crops
+    if config.crop == 'center':
+        transforms.append(CenterCrop(112))
+        transforms.append(Lambda(lambda crops: crops - mean))
+        
+    elif config.crop == 'five_crops':
+        transforms.append(FiveCrop(112))
+        transforms.append(Lambda(lambda crops: crops- mean))
+        transforms.append(Lambda(lambda crops: torch.stack(crops)))
+        
+    elif config.crop == 'ten_crops':
+        transforms.append(TenCrop(112))
+        transforms.append(Lambda(lambda crops: crops- mean))
+        transforms.append(Lambda(lambda crops: torch.stack(crops)))
+    else:
+        raise NotImplementedError()
+    
+    # handle mirror
     if config.mirror:
         transforms.append(Mirror())
         

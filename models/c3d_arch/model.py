@@ -61,5 +61,5 @@ class C3D(nn.Module):
         fc6 = self.relu(self.fc6(x))
         fc7 = self.relu(self.fc7(fc6))
 
-        out = {'fc6': fc6, 'fc7': fc7}
-        return out
+        # out = {'fc6': fc6, 'fc7': fc7}
+        return torch.cat([fc6, fc7], dim = 1)

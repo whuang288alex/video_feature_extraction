@@ -51,8 +51,22 @@ python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650
 ## Adding a Model
 
 1. Add a new yaml file to `configs/`. Check out [configs/README](configs/README.md) for more instructions.
+
 2. Add a new python file to `models/`. Check out [models/README](models/README.md) for more instructions.
 
 ## Acknowledgement
 
-This directory is built on top of the <a href = "https://github.com/facebookresearch/Ego4d"> Ego4d<a> directory.
+This directory is built on top of the <a href = "https://github.com/facebookresearch/Ego4d"> Ego4d directory </a>.
+
+<br>
+
+___
+
+<br>
+
+## Appendix
+
+To resize the video:
+
+`python resize_videos.py -vi ./inputs/videos -vo ./ -s 288 -fps 30`
+

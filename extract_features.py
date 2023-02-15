@@ -191,8 +191,6 @@ def extract_features(
         assert v.uid not in uid_to_video_clips
         uid_to_video_clips[v.uid] = v
 
-    # TODO: check this
-    # NOTE: not quite right if one is < 0
     batch_size = config.inference_config.batch_size
     total_num_clips = sum(num_fvs(v, config.inference_config) for v in videos)
     total_num_clips /= max(batch_size, 1)
@@ -249,6 +247,8 @@ def extract_features(
                     .detach()
                     .squeeze()
                 )
+                
+            # Print out the extracted video feature shape for ONE video
             print("final result shape:", result[k].shape)
         else:
             result[k] = [
@@ -265,17 +265,7 @@ def extract_features(
         expected_fvs = num_fvs(clip, config.inference_config)
         if expected_fvs != fv_amount:
             if assert_feature_size:
-#                 raise AssertionError(
-#                     f"""
-# {k} should have {expected_fvs} fvs, but has {fv_amount}
-# """
-#                 )
                 # this accounts for rounding error in ffmpeg encoding
-                ## e.g., the raw video has 64 frames, yet after resizing ffmpeg 
-                ## may add one more frame, yielding an extra frame. Similarly,
-                ## if the raw video has 65 frames, ffmpeg may occasionally  
-                ## yield 64 frames after encoding. However, the difference in 
-                ## any case must be no greater than 1.
                 assert abs(fv_amount - expected_fvs) <= 1
                 result[k] = result[k][:expected_fvs]
 
