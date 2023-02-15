@@ -1,6 +1,6 @@
 # Adding a config
 
-<b>Note: </b> here, a  video is divided into multiple "clips", and each "clip" is treated as a feature of the video
+<b>Note: </b> here, a  video is divided into multiple "clips", and the result got from each "clip" is treated as a feature of the video
 
 - fps: The number of frames per second in the input video
 - video_dir_path: The path where the input video is stored
