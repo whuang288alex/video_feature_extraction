@@ -4,13 +4,6 @@ This directory contains code to extract features from video datasets using diffe
 
 ## Requirements
 
-To install conda on your remote Linux server, use the following commands:
-```sh
-cd /tmp
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-sh Miniconda3-latest-Linux-x86_64.sh
-```
-
 To set up the environment with conda, use the following commands:
 ```sh
 conda create --name feature_extraction python=3.9
@@ -19,40 +12,35 @@ python -m pip install -r requirements.txt
 ```
 ## Structure of the Repository
 
-- ` configs/`
-    - This directory contains configuration files that define different runtime settings
-- ` models/`
-    - This is the directory where you implement the models you use for feature extraction.
-- ` inputs/`
-    - This is the default directory where you store the input videos.
-- ` features/`
-    - This is the default directory where you store the features you extract.
-- ` submit/`
-    - This directory contains the code to submit computation to CHTC for throughput computing
+- ` configs/`: This directory contains configuration files that define different runtime settings
+    
+- ` models/`: This is the directory where you implement the models you use for feature extraction.
+    
+- ` inputs/`: This is the default directory where you store the input videos.
+    
+- ` features/`: This is the default directory where you store the features you extract.
+    
+- ` submit/`: This directory contains the code to submit computation to CHTC for throughput computing
 
-## Feature Extraction
+## Feature Extraction 
 
+#### (NOTE: for some models, you are REQUIRED to manually download pretrained models for the code to start working. Please refer to [models/README](models/README.md) for more info.)
 
 ```sh
 python slurm.py --config-name slowfast_r101_8x8
 ```
 
-#### 1. To run with a different configuration
+### 1. To run with a different configuration
 
-Provide `--config-name "name"`  where `"name"` is the name of the configuration file without the `.yaml` extension. For example, to run the CLIP model:
+Provide `--config-name "name"`  where `"name"` is the name of the configuration file without the `.yaml` extension. 
+
+For example, to run the CLIP model:
 
 ```bash
 python slurm.py --config-name clip_vit_b_32
 ```
 
-</br>
-
-NOTE: for some models, you are REQUIRED to manually download pretrained models for the code to start working. Please refer to [models/README](models/README.md) for more info.
-
-</br>
-
-
-#### 2. To run on a subset of videos
+### 2. To run on a subset of videos
 
 Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of arguments on the CLI:
 
