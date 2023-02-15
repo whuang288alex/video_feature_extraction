@@ -8,4 +8,3 @@ submit/*.err
 submit/*.out
 submit/*.py
 models/*/assets/*
-*/__pycache__
