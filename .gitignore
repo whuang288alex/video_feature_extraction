@@ -8,3 +8,4 @@ submit/*.err
 submit/*.out
 submit/*.py
 models/*/assets/*
+features/

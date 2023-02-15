@@ -17,7 +17,7 @@ class FeedVideoInput(Module):
             c = input.size(1)
             # evaluate one crop at a time
             out = [self.model(input[:, i]) for i in range(c)]
-            out = torch.stack(out, dim=-1).mean(dim=-1)
+            out = torch.stack(out, dim=-1)
         else:
             raise ValueError('invalid input size')
         return out
@@ -38,10 +38,7 @@ class FeedVideoInputList(Module):
             out = self.model(input)
         elif input[0].ndim == 6:
             # bs, crop, channel, T, w, h
-            # slow: input[0] = [1, 2, 3, 4, 288, 384]
-            # fast: input[1] = [1, 2, 3, 16, 288, 384]
             c = input[0].size(1)
-            
             out = [self.model([x[:, i] for x in input]) for i in range(c)]
             out = torch.stack(out, dim=-1)
         else:
