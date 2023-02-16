@@ -1,6 +1,6 @@
 # Using pretrained models
 
-### Models that REQUIRE you to manually download weights includes: egovlp, i3d
+### Models that REQUIRE you to manually download weights includes: egovlp, i3d, and c3d
 
 - If you want to use the local weights (either pretrained or fine-tuned), set the variable 'use_remote' in config files to false.
 
