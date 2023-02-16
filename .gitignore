@@ -9,3 +9,4 @@ submit/*.out
 submit/*.py
 models/*/assets/*
 features/
+inputs2/

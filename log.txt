@@ -1,0 +1,55 @@
+/home/alex/workspace/video_feature_extraction/config.py:261: UserWarning: 
+The version_base parameter is not specified.
+Please specify a compatability version level, or None.
+Will assume defaults for version 1.1
+  @hydra.main(config_path="configs", config_name=None)
+/home/alex/workspace/video_feature_extraction/slurm.py:245: UserWarning: 
+The version_base parameter is not specified.
+Please specify a compatability version level, or None.
+Will assume defaults for version 1.1
+  @hydra.main(config_path="configs", config_name=None)
+/home/alex/anaconda3/lib/python3.9/site-packages/hydra/_internal/hydra.py:119: UserWarning: Future Hydra versions will no longer change working directory at job runtime by default.
+See https://hydra.cc/docs/1.2/upgrades/1.1_to_1.2/changes_to_job_working_dir/ for more information.
+  ret = run_job(
+videos:   0%|          | 0/1 [00:00<?, ?it/s]/home/alex/anaconda3/lib/python3.9/site-packages/torchvision/transforms/_functional_video.py:6: UserWarning: The 'torchvision.transforms._functional_video' module is deprecated since 0.12 and will be removed in 0.14. Please use the 'torchvision.transforms.functional' module instead.
+  warnings.warn(
+/home/alex/anaconda3/lib/python3.9/site-packages/torchvision/transforms/_transforms_video.py:25: UserWarning: The 'torchvision.transforms._transforms_video' module is deprecated since 0.12 and will be removed in 0.14. Please use the 'torchvision.transforms' module instead.
+  warnings.warn(
+Using cache found in /home/alex/.cache/torch/hub/facebookresearch_pytorchvideo_main
+
+  0%|          | 0/283 [00:00<?, ?it/s][A  0%|          | 0/283 [00:00<?, ?it/s]
+videos:   0%|          | 0/1 [00:06<?, ?it/s]
+Error executing job with overrides: []
+Traceback (most recent call last):
+  File "/home/alex/workspace/video_feature_extraction/slurm.py", line 270, in schedule_feature_extraction
+    results = perform_feature_extraction(videos, config)
+  File "/home/alex/workspace/video_feature_extraction/extract_features.py", line 313, in perform_feature_extraction
+    feature_extract_result = extract_features(
+  File "/home/alex/workspace/video_feature_extraction/extract_features.py", line 205, in extract_features
+    for ef in tqdm(
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/tqdm/std.py", line 1195, in __iter__
+    for obj in iterable:
+  File "/home/alex/workspace/video_feature_extraction/extract_features.py", line 95, in _extract_features
+    for i, x in enumerate(data):
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 530, in __next__
+    data = self._next_data()
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1224, in _next_data
+    return self._process_data(data)
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1250, in _process_data
+    data.reraise()
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/_utils.py", line 457, in reraise
+    raise exception
+AssertionError: Caught AssertionError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/alex/anaconda3/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/alex/workspace/video_feature_extraction/dataset.py", line 161, in __getitem__
+    assert datum['num_frames'] == self.config.inference_config.frame_window
+AssertionError
+
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

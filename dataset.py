@@ -156,6 +156,8 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         v_frames = datum["video"]
         a_frames = datum["audio"]
         ## force checking the number of frames to guard against missing frames
+        # print( "datum: ", datum['num_frames'])
+        
         assert datum['num_frames'] == self.config.inference_config.frame_window
         sample_dict = {
             "video_name": video.uid,
