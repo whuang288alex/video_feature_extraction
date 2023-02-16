@@ -39,6 +39,7 @@ schedule_config:
 model_config:
   pretrained_dataset: sports1m
   side_size: 288
+  crop_size: 112
   dilation: 1
   mean:
   - 0.5
@@ -48,6 +49,6 @@ model_config:
   - 0.5
   - 0.5
   - 0.5
-  crop: center
+  crop: five_crops
   mirror: true
 model_module_str: models.c3d

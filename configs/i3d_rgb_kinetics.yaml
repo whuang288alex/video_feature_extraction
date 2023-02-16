@@ -48,7 +48,6 @@ model_config:
   - 0.5
   - 0.5
   - 0.5
-  center_crop: false
-  three_crop: false
+  crop: three_crops
   mirror: true
 model_module_str: models.i3d

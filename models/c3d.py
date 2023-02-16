@@ -58,18 +58,18 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
     
     # handle crops
     if config.crop == 'center':
-        transforms.append(CenterCrop(112))
+        transforms.append(CenterCrop(config.crop_size))
         transforms.append(Lambda(lambda crops: crops - mean))
         
     elif config.crop == 'five_crops':
-        transforms.append(FiveCrop(112))
-        transforms.append(Lambda(lambda crops: crops- mean))
+        transforms.append(FiveCrop(config.crop_size))
         transforms.append(Lambda(lambda crops: torch.stack(crops)))
+        transforms.append(Lambda(lambda crops: crops - mean))
         
     elif config.crop == 'ten_crops':
-        transforms.append(TenCrop(112))
-        transforms.append(Lambda(lambda crops: crops- mean))
+        transforms.append(TenCrop(config.crop_size))
         transforms.append(Lambda(lambda crops: torch.stack(crops)))
+        transforms.append(Lambda(lambda crops: crops- mean))
     else:
         raise NotImplementedError()
     

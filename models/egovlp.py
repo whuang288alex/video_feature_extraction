@@ -49,9 +49,9 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
         ShortSideScale(size=config.side_size),
     ]
     
-    if config.center_crop:
+    if config.crop == "center":
         transforms.append(CenterCropVideo(config.crop_size))
-    elif config.three_crop:
+    elif config.crop == "three_crops":
         transforms.append(ThreeCrop(config.crop_size))
     else :
         raise ValueError('Need to either use center crop or three crop')
