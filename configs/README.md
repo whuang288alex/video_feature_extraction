@@ -20,7 +20,13 @@
 
 - side_size: This is the size that the shorter side of the input video will be resized to
 
-- crop: For most models, you can choose between "three_crops" and "center". For c3d, you can choose between "center", "five_crops", and "ten_crops"
+- crop:
+ 
+  - For most models, you can choose between "three_crops" and "center". 
+  
+  - For c3d, you can choose between "center", "five_crops", and "ten_crops".
+  
+  - For slowfast, there is no need to crop.
 
 - crop_size: the size of the crop mentioned above.
 
