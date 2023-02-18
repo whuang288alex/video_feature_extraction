@@ -12,8 +12,8 @@ io:
   exclude_no_audio: false
 inference_config:
   device: cuda
-  batch_size: 1
-  num_workers: 8
+  batch_size: 100
+  num_workers: 100
   prefetch_factor: 2
   fps: 30 # 25 for training
   frame_window: 16
@@ -39,6 +39,7 @@ schedule_config:
 model_config:
   pretrained_dataset: rgb_kinetics
   side_size: 288
+  crop_size: 288
   dilation: 1
   mean:
   - 0.5

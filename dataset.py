@@ -32,9 +32,9 @@ def get_frames(container, t1, t2, buffer, max_buffer_size):
     def exceeds_range(frame):
         return frame.pts * tb >= t2
 
-    # for frame in buffer:
-    #     if is_in_range(frame):
-    #         ret.append(frame)
+    for frame in buffer:
+        if is_in_range(frame):
+            ret.append(frame)
 
     prev_pts = None
     for frame in container.decode(video=0):
@@ -47,9 +47,9 @@ def get_frames(container, t1, t2, buffer, max_buffer_size):
 
         prev_pts = frame.pts
 
-        # buffer.append(frame)
-        # if len(buffer) > max_buffer_size:
-        #     del buffer[0]
+        buffer.append(frame)
+        if len(buffer) > max_buffer_size:
+            del buffer[0]
 
         if is_in_range(frame):
             ret.append(frame)
@@ -63,7 +63,7 @@ def get_frames(container, t1, t2, buffer, max_buffer_size):
 
 
 class EncodedVideoCached:
-    def __init__(self, path, frame_buffer_size=16):
+    def __init__(self, path, frame_buffer_size=100):
         self.path = path
         self.vid = EncodedVideo.from_path(path, decoder="pyav")
         self.vid._container.seek(0)
@@ -142,7 +142,6 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         video, clip = self.clips[idx]
-
         (
             clip_start,
             clip_end,
@@ -155,9 +154,9 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         datum = encoded_video.get_clip(clip_start, clip_end)
         v_frames = datum["video"]
         a_frames = datum["audio"]
-        ## force checking the number of frames to guard against missing frames
-        # print( "datum: ", datum['num_frames'])
         
+        ## force checking the number of frames to guard against missing frames
+        print( "datum: ", datum['num_frames'])
         assert datum['num_frames'] == self.config.inference_config.frame_window
         sample_dict = {
             "video_name": video.uid,
@@ -168,6 +167,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             "clip_start_sec": float(clip_start),
             "clip_end_sec": float(clip_end),
         }
+        
         if v_frames is not None:
             sample_dict["video"] = v_frames
         if a_frames is not None:
