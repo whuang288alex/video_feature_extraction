@@ -12,8 +12,8 @@ io:
   exclude_no_audio: false
 inference_config:
   device: cuda
-  batch_size: 3
-  num_workers: 8
+  batch_size: 64
+  num_workers: 4
   prefetch_factor: 2
   fps: 30
   frame_window: 32
