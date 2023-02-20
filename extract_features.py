@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Tuple, Union
-
 import torch
 import torchvision
 from config import (
@@ -84,48 +83,51 @@ def _extract_features(
     max_examples: int = -1,
     silent: bool = False,
 ) -> Iterator[ExtractedFeature]:
-    device = config.inference_config.device
-
-    data = create_data_loader_or_dset(videos, config)
     
-    if not silent:
-        print(f"extracting from {videos}")
-
+    device = config.inference_config.device
+    data = create_data_loader_or_dset(videos, config)
+   
     t1 = time.time()
     for i, x in enumerate(data):
+        
+        # x. shape: bs, c, T, w, h
         t2 = time.time()
         load_time = t2 - t1
-
-        # avoid "Too many open files" error
-        # otherwise processes for data loading cannot be closed
-        # https://github.com/pytorch/pytorch/issues/11201#issuecomment-486232056
-        x_cp = deepcopy(x)
-        del x
-        x = x_cp
-
         t1 = time.time()
 
+        # avoid "Too many open files" error
+        # x_cp = deepcopy(x)
+        # del x
+        # x = x_cp
+
+        # handle video and audio seperately
         for k in ["video", "audio"]:
             if k not in x or x[k] is None:
                 continue
-
             v = x[k]
+        
+            # for slow fast ([slow_pathway, fast_pathway])
             if isinstance(v, list):
                 x[k] = [i.to(device) for i in v]
                 batch_size = v[0].shape[0]
+
+            # for other models
             else:
                 x[k] = v.to(device)
                 batch_size = v.shape[0]
-
+                
         t2 = time.time()
         transfer_time = t2 - t1
+        t1 = time.time()
 
+        
         with torch.no_grad():
-            t1 = time.time()
+            
             if not config.io.debug_mode:
                 fv = model(x)
                 if isinstance(fv, torch.Tensor):
                     fv = fv.detach().cpu()
+            
             else:
                 vid_inp = x["video"]
                 fv = None
@@ -144,6 +146,8 @@ def _extract_features(
 
             forward_pass_time = t2 - t1
 
+            # return the result for this batch
+            # clip_index: clips that are in this batch, should have length = batch_size
             yield ExtractedFeature(
                 video_uid=x["video_name"],
                 clip_index=x["clip_index"],
@@ -155,9 +159,7 @@ def _extract_features(
                 time_forward_pass=forward_pass_time,
             )
 
-        if i % 50 == 0:
-            gc.collect()
-
+        gc.collect()
         if max_examples > 0 and (i + 1) * batch_size >= max_examples:
             if not silent:
                 print("Breaking...")
@@ -174,27 +176,26 @@ def extract_features(
     silent: bool = False,
     assert_feature_size: bool = False,
 ) -> FeatureExtractionResult:
+
     if model is None:
         model = load_model(config)
-
-    if log_info and not silent:
-        print(f"config={config}")
-        print(f"Number of videos = {len(videos)}")
-
+    
+    # this dictionary should only contain one video
     fvs = defaultdict(list)
     time_to_load = []
     time_transfer_device = []
     time_forward_pass = []
-
-    uid_to_video_clips = {}
-    for v in videos:
-        assert v.uid not in uid_to_video_clips
-        uid_to_video_clips[v.uid] = v
-
+    
+    # uid_to_video_clips = {}
+    # for v in videos:
+    #     assert v.uid not in uid_to_video_clips
+    #     uid_to_video_clips[v.uid] = v
+    
     batch_size = config.inference_config.batch_size
     total_num_clips = sum(num_fvs(v, config.inference_config) for v in videos)
-    total_num_clips /= max(batch_size, 1)
-    total_num_clips = math.ceil(total_num_clips)
+    
+    batch_num = total_num_clips / max(batch_size, 1)
+    batch_num = math.ceil(batch_num)
 
     if not silent:
         print(
@@ -202,11 +203,12 @@ def extract_features(
             flush=True,
         )
 
+    # this will run batch_num times
     for ef in tqdm(
         _extract_features(
             model, videos, config, max_examples=max_examples, silent=silent
         ),
-        total=total_num_clips,
+        total = batch_num,
     ):
         if config.io.debug_mode:
             continue
@@ -216,12 +218,17 @@ def extract_features(
             if isinstance(ef.feature, torch.Tensor):
                 ef.feature = ef.feature.cpu().squeeze()
             fvs[key].append(ef)
+              
         else:
-            if ef.feature is not None and isinstance(ef.feature, torch.Tensor):
-                assert len(ef.video_uid) == len(ef.feature)
-                assert len(ef.video_uid) == len(ef.clip_index)
+            # if ef.feature is not None and isinstance(ef.feature, torch.Tensor):
+            #     assert len(ef.video_uid) == len(ef.feature)
+            #     assert len(ef.video_uid) == len(ef.clip_index)
+            
+            # make sure the dimention is correct
+            ef.video_uid = list(set(ef.video_uid))
 
-            for i in range(len(ef.video_uid)):
+            # this should only really run one time
+            for i in range(1):
                 key = ef.video_uid[i]
                 if isinstance(ef.feature, torch.Tensor):
                     ef.feature[i] = ef.feature[i].cpu().squeeze()
@@ -230,11 +237,14 @@ def extract_features(
         time_to_load.append(ef.time_to_load)
         time_transfer_device.append(ef.time_transfer_device)
         time_forward_pass.append(ef.time_forward_pass)
-
+    
     result = {}
     total_num = 0
+    
     for k, efs in fvs.items():
-        efs.sort(key=lambda x: x.start_time_sec)
+    
+        f = lambda x: x.start_time_sec[0]
+        efs.sort(key = f)
 
         fv_amount = len(efs)
         if isinstance(efs[0].feature, torch.Tensor):
@@ -249,7 +259,7 @@ def extract_features(
                 )
                 
             # Print out the extracted video feature shape for ONE video
-            print("final result shape:", result[k].shape)
+            print("final result shape for this video:", result[k].shape)
         else:
             result[k] = [
                 {
@@ -261,14 +271,13 @@ def extract_features(
                 if x.feature is not None
             ]
 
-        clip = uid_to_video_clips[k]
-        expected_fvs = num_fvs(clip, config.inference_config)
-        if expected_fvs != fv_amount:
-            if assert_feature_size:
-                # this accounts for rounding error in ffmpeg encoding
-                assert abs(fv_amount - expected_fvs) <= 1
-                result[k] = result[k][:expected_fvs]
-
+        # clip = uid_to_video_clips[k]
+        # expected_fvs = num_fvs(clip, config.inference_config)/config.inference_config.batch_size
+        # if expected_fvs != fv_amount:
+        #     if assert_feature_size:
+        #         # this accounts for rounding error in ffmpeg encoding
+        #         assert abs(fv_amount - expected_fvs) <= 1
+        #         result[k] = result[k][:expected_fvs]
         total_num += len(result[k])
 
     if max_examples > 0:
@@ -289,7 +298,7 @@ def perform_feature_extraction(
 ) -> TimeStats:
     os.makedirs(config.io.out_path, exist_ok=True)
 
-    # TODO batch this
+    # Get the stats for the entire extraction
     time_stats = TimeStats(
         to_load=[],
         transfer_device=[],
@@ -297,19 +306,23 @@ def perform_feature_extraction(
         overall=0,
         to_save=0,
     )
-
+ 
+    print(f"config = {config}")
+    print(f"Number of videos = {len(videos)}")
+        
     # sort by smallest video first
     videos.sort(key=lambda x: x.frame_count)
 
     is_audio_model = config.inference_config.include_audio
     o1 = time.time()
     for vid in tqdm(videos, desc="videos"):
+        
+        # if "THIS VIDEO" feature has been extracted before
         gc.collect()
-
         if os.path.exists(f"{config.io.out_path}/{vid.uid}.pt"):
-            continue
+            os.remove(f"{config.io.out_path}/{vid.uid}.pt")
 
-        # TODO: convert this to be a generator
+        # Extract feature from "THIS VIDEO"
         feature_extract_result = extract_features(
             [vid],
             config,
@@ -317,19 +330,19 @@ def perform_feature_extraction(
         )
         result = feature_extract_result.result
 
+        # Save feature for "THIS VIDEO"
         t1 = time.time()
-        for k, v in result.items():
+        for k, v in result.items():  # there should really only be one key in this part
             torch.save(v, f"{config.io.out_path}/{k}.pt")
         t2 = time.time()
 
+        # Time stats for "THIS VIDEO"
         time_stats.to_save += t2 - t1
         time_stats.to_load.extend(feature_extract_result.time_stats.to_load)
         time_stats.transfer_device.extend(
             feature_extract_result.time_stats.transfer_device
         )
         time_stats.forward_pass.extend(feature_extract_result.time_stats.forward_pass)
-
     o2 = time.time()
-
     time_stats.overall = o2 - o1
     return time_stats

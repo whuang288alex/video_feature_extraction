@@ -12,12 +12,12 @@ io:
   exclude_no_audio: false
 inference_config:
   device: cuda
-  batch_size: 100
-  num_workers: 100
+  batch_size: 32
+  num_workers: 2
   prefetch_factor: 2
   fps: 30 # 25 for training
-  frame_window: 16
-  stride: 4
+  frame_window: 16  
+  stride: 8
   include_audio: false
   include_video: true
   norm_config:

@@ -20,7 +20,6 @@ from torchvision.transforms import Compose
 ## buffer to avoid unexpected behavior (e.g., skipping frames). The best bet: 
 ## set num_workers >> frame_window / stride
 def get_frames(container, t1, t2, buffer, max_buffer_size):
-    # [t1, t2]
     ret = []
 
     tb = container.streams.video[0].time_base
@@ -85,6 +84,7 @@ class EncodedVideoCached:
             self.frame_buffer,
             self.frame_buffer_size,
         )
+        
         self.last_t = t1
         return {
             "num_frames": len(frames),
@@ -109,7 +109,8 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         assert (
             config.inference_config.include_audio
             ^ config.inference_config.include_video
-        ), """
+        ) 
+        """
         cannot include audio and video at the same time
         """
         self.config = config
@@ -156,7 +157,6 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         a_frames = datum["audio"]
         
         ## force checking the number of frames to guard against missing frames
-        print( "datum: ", datum['num_frames'])
         assert datum['num_frames'] == self.config.inference_config.frame_window
         sample_dict = {
             "video_name": video.uid,
@@ -229,6 +229,7 @@ def create_dset(
         )
         if isinstance(config.inference_config.frame_window, int)
         else config.inference_config.frame_window,
+        
         stride=Fraction(config.inference_config.stride, config.inference_config.fps)
         if isinstance(config.inference_config.stride, int)
         else config.inference_config.stride,
@@ -253,14 +254,15 @@ def create_data_loader(dset, config: FeatureExtractConfig) -> DataLoader:
     if config.inference_config.batch_size == 0:
         raise AssertionError("not supported")
 
-    if config.inference_config.num_workers == 0:  # for debugging
-        return dset
-
+    # if config.inference_config.num_workers == 0:  # for debugging
+    #     return dset
+    
     return DataLoader(
         dset,
         batch_size=config.inference_config.batch_size,
         num_workers=config.inference_config.num_workers,
         prefetch_factor=config.inference_config.prefetch_factor,
+        drop_last= True
     )
 
 
