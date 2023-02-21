@@ -14,14 +14,9 @@ from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.utils.data import DataLoader
 from torchvision.transforms import Compose
 
-
-## NOTE: this implementation is not thread safe. Whether the returning frames 
-## are correct depends on the number of workers and clip stride. Also disable 
-## buffer to avoid unexpected behavior (e.g., skipping frames). The best bet: 
-## set num_workers >> frame_window / stride
+# the function that is used to get frames based on the time stamps of videos
 def get_frames(container, t1, t2, buffer, max_buffer_size):
     ret = []
-
     tb = container.streams.video[0].time_base
 
     def is_in_range(frame):
@@ -34,28 +29,33 @@ def get_frames(container, t1, t2, buffer, max_buffer_size):
     for frame in buffer:
         if is_in_range(frame):
             ret.append(frame)
-
+    
     prev_pts = None
-    for frame in container.decode(video=0):
-        if frame.pts is None:
-            raise AssertionError("frame is None")
-        if prev_pts is not None and frame.pts < prev_pts:
-            raise AssertionError("failed assumption pts in order: ")
-        if not isinstance(frame, av.VideoFrame):
-            raise AssertionError("other packets not supported")
+    
+    # This try except block is to avoid the EOF error that arrives because t2 exceeds the frame range 
+    try:
+        for frame in container.decode(video=0):
+            if frame.pts is None:
+                raise AssertionError("frame is None")
+            if prev_pts is not None and frame.pts < prev_pts:
+                raise AssertionError("failed assumption pts in order: ")
+            if not isinstance(frame, av.VideoFrame):
+                raise AssertionError("other packets not supported")
+            prev_pts = frame.pts
 
-        prev_pts = frame.pts
+            buffer.append(frame)
+            if len(buffer) > max_buffer_size:
+                del buffer[0]
 
-        buffer.append(frame)
-        if len(buffer) > max_buffer_size:
-            del buffer[0]
-
-        if is_in_range(frame):
-            ret.append(frame)
-        elif exceeds_range(frame):
-            break
+            if is_in_range(frame):
+                ret.append(frame)
+            elif exceeds_range(frame):
+                break
+    except:
+        pass
+    
     pts_in_ret = [frame.pts for frame in ret]
-    print(pts_in_ret)
+    # print(pts_in_ret)
     if not (np.diff(pts_in_ret) > 0).all():
         raise AssertionError("not increasing sequence of frames")
     return ret
@@ -74,9 +74,10 @@ class EncodedVideoCached:
     def get_clip(self, t1, t2):
         if self.last_t is not None and t1 < self.last_t:
             raise AssertionError("cannot seek backward")
-
+        
         vstream = self.vid._container.streams.video[0]
         vs = vstream.start_time * vstream.time_base
+    
         frames = get_frames(
             self.vid._container,
             t1 + vs,
@@ -95,7 +96,7 @@ class EncodedVideoCached:
             ).to(torch.float32),
             "audio": None,
         }
-
+        
     @property
     def duration(self) -> float:
         vstream = self.vid._container.streams.video[0]
@@ -157,7 +158,15 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         a_frames = datum["audio"]
         
         ## force checking the number of frames to guard against missing frames
+        
+        if datum['num_frames'] != self.config.inference_config.frame_window:
+            pad = (self.config.inference_config.frame_window - datum['num_frames'])
+            
+            datum["video"] = torch.cat([datum["video"], torch.zeros(pad, *datum["video"].shape[1:])])
+            datum['num_frames'] = len(datum["video"])
+        
         assert datum['num_frames'] == self.config.inference_config.frame_window
+       
         sample_dict = {
             "video_name": video.uid,
             "video_index": idx,
@@ -211,7 +220,6 @@ def get_all_clips(video, video_length, sampler):
         clip = sampler(last_clip_time, video_length, annotation)
         last_clip_time = clip.clip_end_sec
         n_clips += 1
-
         yield (video, clip)
 
         if clip.is_last_clip:
@@ -224,12 +232,15 @@ def create_dset(
     assert isinstance(videos[0], Video)
 
     clip_sampler = UniformClipSampler(
+        
+        # how long each clip is in seconds
         clip_duration=Fraction(
             config.inference_config.frame_window, config.inference_config.fps
         )
         if isinstance(config.inference_config.frame_window, int)
         else config.inference_config.frame_window,
         
+        # how long each stride is in seconds
         stride=Fraction(config.inference_config.stride, config.inference_config.fps)
         if isinstance(config.inference_config.stride, int)
         else config.inference_config.stride,
@@ -253,16 +264,13 @@ def create_dset(
 def create_data_loader(dset, config: FeatureExtractConfig) -> DataLoader:
     if config.inference_config.batch_size == 0:
         raise AssertionError("not supported")
-
-    # if config.inference_config.num_workers == 0:  # for debugging
-    #     return dset
     
     return DataLoader(
         dset,
         batch_size=config.inference_config.batch_size,
         num_workers=config.inference_config.num_workers,
-        prefetch_factor=config.inference_config.prefetch_factor,
-        drop_last= True
+        prefetch_factor=config.inference_config.prefetch_factor
+        # , drop_last= True
     )
 
 
@@ -270,4 +278,5 @@ def create_data_loader_or_dset(
     videos: List[Video], config: FeatureExtractConfig
 ) -> Any:
     dset = create_dset(videos, config)
+    
     return create_data_loader(dset=dset, config=config)

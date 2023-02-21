@@ -20,8 +20,8 @@ from config import (
 )
 from dataset import create_data_loader_or_dset
 from torch.nn import Module
-from tqdm.auto import tqdm
-
+# from tqdm.auto import tqdm
+from tqdm import tqdm
 
 @dataclass
 class TimeStats:
@@ -50,9 +50,6 @@ class ExtractedFeature:
     time_transfer_device: List[float]
     time_forward_pass: List[float]
 
-
-# TODO: use this method in pytorchvideo test_uniform_clip_sampler
-# NOTE this is copied from there - hence has been tested
 def _num_fvs(
     num_frames: int,
     fps: float,
@@ -89,6 +86,10 @@ def _extract_features(
    
     t1 = time.time()
     for i, x in enumerate(data):
+        
+        # handle EOF error
+        if x == None:
+            continue
         
         # x. shape: bs, c, T, w, h
         t2 = time.time()
@@ -186,10 +187,10 @@ def extract_features(
     time_transfer_device = []
     time_forward_pass = []
     
-    # uid_to_video_clips = {}
-    # for v in videos:
-    #     assert v.uid not in uid_to_video_clips
-    #     uid_to_video_clips[v.uid] = v
+    uid_to_video_clips = {}
+    for v in videos:
+        assert v.uid not in uid_to_video_clips
+        uid_to_video_clips[v.uid] = v
     
     batch_size = config.inference_config.batch_size
     total_num_clips = sum(num_fvs(v, config.inference_config) for v in videos)
@@ -246,13 +247,13 @@ def extract_features(
         f = lambda x: x.start_time_sec[0]
         efs.sort(key = f)
 
-        fv_amount = len(efs)
+        
         if isinstance(efs[0].feature, torch.Tensor):
             if all([e.feature.shape == efs[0].feature.shape for e in efs]):
                 result[k] = torch.stack([x.feature for x in efs]).cpu().detach()
             else:
                 result[k] = (
-                    torch.concat([x.feature for x in efs], dim=1)
+                    torch.concat([x.feature for x in efs], dim=0)
                     .cpu()
                     .detach()
                     .squeeze()
@@ -271,13 +272,15 @@ def extract_features(
                 if x.feature is not None
             ]
 
-        # clip = uid_to_video_clips[k]
-        # expected_fvs = num_fvs(clip, config.inference_config)/config.inference_config.batch_size
-        # if expected_fvs != fv_amount:
-        #     if assert_feature_size:
-        #         # this accounts for rounding error in ffmpeg encoding
-        #         assert abs(fv_amount - expected_fvs) <= 1
-        #         result[k] = result[k][:expected_fvs]
+        fv_amount = result[k].shape[0]
+        clip = uid_to_video_clips[k]
+        expected_fvs = num_fvs(clip, config.inference_config)
+        
+        if expected_fvs != fv_amount:
+            if assert_feature_size:
+                # this accounts for rounding error in ffmpeg encoding
+                assert abs(fv_amount - expected_fvs) <= 1
+                result[k] = result[k][:expected_fvs]
         total_num += len(result[k])
 
     if max_examples > 0:
