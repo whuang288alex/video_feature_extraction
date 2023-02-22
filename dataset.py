@@ -156,15 +156,14 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         datum = encoded_video.get_clip(clip_start, clip_end)
         v_frames = datum["video"]
         a_frames = datum["audio"]
-        
-        ## force checking the number of frames to guard against missing frames
-        
+
+        # if this clip does not have enough, pad it with zeros
         if datum['num_frames'] != self.config.inference_config.frame_window:
             pad = (self.config.inference_config.frame_window - datum['num_frames'])
-            
             datum["video"] = torch.cat([datum["video"], torch.zeros(pad, *datum["video"].shape[1:])])
             datum['num_frames'] = len(datum["video"])
         
+        # force checking the number of frames to guard against missing frames
         assert datum['num_frames'] == self.config.inference_config.frame_window
        
         sample_dict = {

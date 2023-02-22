@@ -247,17 +247,16 @@ def extract_features(
         f = lambda x: x.start_time_sec[0]
         efs.sort(key = f)
 
-        
         if isinstance(efs[0].feature, torch.Tensor):
-            if all([e.feature.shape == efs[0].feature.shape for e in efs]):
-                result[k] = torch.stack([x.feature for x in efs]).cpu().detach()
-            else:
-                result[k] = (
-                    torch.concat([x.feature for x in efs], dim=0)
-                    .cpu()
-                    .detach()
-                    .squeeze()
-                )
+            # if all([e.feature.shape == efs[0].feature.shape for e in efs]):
+            #     result[k] = torch.stack([x.feature for x in efs]).cpu().detach()
+            # else:
+            result[k] = (
+                torch.concat([x.feature for x in efs], dim=0)
+                .cpu()
+                .detach()
+                .squeeze()
+            )
                 
             # Print out the extracted video feature shape for ONE video
             print("final result shape for this video:", result[k].shape)
@@ -279,6 +278,8 @@ def extract_features(
         if expected_fvs != fv_amount:
             if assert_feature_size:
                 # this accounts for rounding error in ffmpeg encoding
+                print("fv_aount: ", fv_amount)
+                print("expected_fvs: ", expected_fvs)
                 assert abs(fv_amount - expected_fvs) <= 1
                 result[k] = result[k][:expected_fvs]
         total_num += len(result[k])
