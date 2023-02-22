@@ -22,8 +22,6 @@
  
 # Using Local Checkpoints
 
-#### NOTE: Models that REQUIRE you to manually download checkpoints include: egovlp, i3d, and c3d
-
 If you want to use the local checkpoints (either pretrained or fine-tuned)
 
 1. Set the variable `use_remote` in config files to false.
