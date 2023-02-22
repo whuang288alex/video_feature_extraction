@@ -2,7 +2,7 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /inputs/videos
+  video_dir_path: /inputs/videos_ego4d
   ego4d_download_dir: /inputs
   uid_list: null
   video_limit: -1

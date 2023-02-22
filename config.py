@@ -9,30 +9,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import hydra
-import pandas as pd
 from hydra.core.config_store import ConfigStore
 from omegaconf import OmegaConf
 from torchaudio.transforms import Resample
 from torchvision.transforms import Compose, Lambda
 
-
-@dataclass
-class Video:
-    """
-    Description of a video
-    """
-
-    uid: str
-    path: str
-    frame_count: int
-    w: int
-    h: int
-    has_audio: bool
-    is_stereo: bool = False
-
-    @property
-    def dim(self) -> int:
-        return (self.w * self.h) / (2 if self.is_stereo else 1)
+import cv2
 
 
 @dataclass
@@ -67,7 +49,6 @@ class InputOutputConfig:
     out_path: str = (
         "/checkpoint/miguelmartin/ego4d_track2_features/full_scale/v1_1/action_features"
     )
-
     exclude_no_audio: bool = False
 
 
@@ -109,8 +90,8 @@ class ScheduleConfig:
     # Batching Configuration
     overhead: float = 2  # off in the worst case -- estimate will be wrong
     time_per_forward_pass: float = 0.8
-
     schedule_time_per_node: float = 10
+
 
 @dataclass
 class BaseModelConfig:
@@ -119,6 +100,17 @@ class BaseModelConfig:
     mirror = False
 
 
+@dataclass
+class ModelConfig(BaseModelConfig):
+    model_path: Optional[str] = None
+    hub_path: Optional[str] = "slowfast_r101"
+    slowfast_alpha: int = 4
+    side_size: int = 288   
+    dilation: int = 2       
+    mean: Tuple[float] = (0.45, 0.45, 0.45)
+    std: Tuple[float] = (0.225, 0.225, 0.225)
+    
+    
 @dataclass(order=True)
 class FeatureExtractConfig:
     io: InputOutputConfig
@@ -128,104 +120,28 @@ class FeatureExtractConfig:
     model_module_str: str = ""
     force_yes: bool = False
 
+    
+@dataclass
+class Video:
+    """
+    Description of a video
+    """
+    uid: str
+    path: str
+    frame_count: int
+    w: int
+    h: int
+    has_audio: bool
+    is_stereo: bool = False
 
+    @property
+    def dim(self) -> int:
+        return (self.w * self.h) / (2 if self.is_stereo else 1)
+
+
+# helper function to get model specific functions
 def get_model_module(config: FeatureExtractConfig):
-    return importlib.import_module(config.model_module_str)
-
-
-def _uids_for_dir(path: str) -> List[str]:
-    ret = [
-        p
-        for p in os.listdir(path)
-        if Path(p).suffix not in [".json", ".csv", ".csv"]
-        and not p.startswith(".")
-        and not p.startswith("manifest")
-    ]
-    return [Path(p).stem for p in ret]
-
-
-def _path_for(config: InputOutputConfig, uid: str) -> str:
-    return f"{config.video_dir_path}/{uid}.mp4"
-
-
-def _unfiltered_uids(config: InputOutputConfig) -> List[str]:
-    uids = config.uid_list
-    if uids is None:
-        assert config.video_dir_path is not None, "Not given any uids"
-        uids = _uids_for_dir(config.video_dir_path)
-    return uids
-
-
-def _uids(config: InputOutputConfig) -> List[str]:
-    uids = _unfiltered_uids(config)
-
-    if config.filter_completed:
-        completed_uids = set(_uids_for_dir(config.out_path))
-        uids = [uid for uid in uids if uid not in completed_uids]
-
-    assert uids is not None, "`uids` is None"
-    assert len(uids) >= 0, "`len(uids)` is 0"
-    return uids
-
-
-def _video_paths(config: InputOutputConfig, uids: List[str]) -> List[str]:
-    return [_path_for(config, uid) for uid in uids]
-
-
-def _uid_to_info(config: InputOutputConfig) -> Dict[str, int]:
-    manifest_df = pd.read_csv(f"{config.video_dir_path}/manifest.csv")
-    return {
-        row.video_uid: {
-            "num_frames": row.canonical_num_frames,
-            "w": row.canonical_display_width,
-            "h": row.canonical_display_height,
-            "has_audio": not (
-                pd.isnull(row.canonical_audio_start_sec)
-                and pd.isnull(row.canonical_audio_duration_sec)
-            ),
-        }
-        for row in manifest_df.itertuples()
-    }
-
-
-def _uid_to_is_stereo(config: InputOutputConfig) -> Dict[str, bool]:
-    data_json = json.load(open(f"{config.ego4d_download_dir}/ego4d.json"))
-    return {v["video_uid"]: v["is_stereo"] for v in data_json["videos"]}
-
-
-def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
-    uids = _uids(config) if not unfiltered else _unfiltered_uids(config)
-    uid_to_info = _uid_to_info(config)
-    uids_to_is_stereo = _uid_to_is_stereo(config)
-    videos = [
-        Video(
-            uid=uid,
-            path=_path_for(config, uid),
-            frame_count=uid_to_info[uid]["num_frames"],
-            w=uid_to_info[uid]["w"],
-            h=uid_to_info[uid]["h"],
-            has_audio=uid_to_info[uid]["has_audio"],
-            is_stereo=uids_to_is_stereo[uid],
-        )
-        for uid in uids
-        if uid in uid_to_info
-    ]
-    if config.exclude_no_audio:
-        return [v for v in videos if v.has_audio]
-
-    return videos
-
-
-def get_videos(config: FeatureExtractConfig) -> Tuple[List[Video], List[Video]]:
-    """
-    Return (videos_to_process, all_videos)
-    """
-    possibly_filtered_videos = _videos(config.io, unfiltered=False)
-    all_videos = _videos(config.io, unfiltered=True)
-    if config.io.video_limit > 0:
-        random.shuffle(possibly_filtered_videos)
-        return possibly_filtered_videos[0 : config.io.video_limit], all_videos
-    return possibly_filtered_videos, all_videos
+        return importlib.import_module(config.model_module_str)
 
 
 def get_transform(config: FeatureExtractConfig) -> Any:
@@ -258,20 +174,98 @@ def load_model(config: FeatureExtractConfig, patch_final_layer: bool = True) -> 
     )
 
 
+# helper function to get all the videos in the input directory
+def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
+    
+    def _uids_for_dir(path: str) -> List[str]:
+        ret = [
+            p
+            for p in os.listdir(path)
+            if Path(p).suffix not in [".json", ".csv", ".csv"]
+            and not p.startswith(".")
+            and not p.startswith("manifest")
+        ]
+        return [Path(p).stem for p in ret]
+    
+    def _unfiltered_uids(config: InputOutputConfig) -> List[str]:
+        uids = config.uid_list
+        if uids is None:
+            assert config.video_dir_path is not None, "Not given any uids"
+            uids = _uids_for_dir(config.video_dir_path)
+        return uids
+
+    # only returns uids of videos that are not yet processed
+    def _uids(config: InputOutputConfig) -> List[str]:
+        uids = _unfiltered_uids(config)
+        if config.filter_completed:
+            completed_uids = set(_uids_for_dir(config.out_path))
+            uids = [uid for uid in uids if uid not in completed_uids]
+
+        assert uids is not None, "`uids` is None"
+        assert len(uids) >= 0, "`len(uids)` is 0"
+        return uids
+
+    def _path_for(config: InputOutputConfig, uid: str) -> str:
+        return f"{config.video_dir_path}/{uid}.mp4"
+
+    def get_frame_count(video_path):
+        vid = cv2.VideoCapture(video_path)
+        length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
+        return length
+
+    def get_w(video_path):
+        vid = cv2.VideoCapture(video_path)
+        width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
+        return width
+
+    def get_h(video_path):
+        vid = cv2.VideoCapture(video_path)
+        height = vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        return height
+
+    uids = _uids(config) if not unfiltered else _unfiltered_uids(config)
+    videos = [
+        Video(
+            uid=uid,
+            path = _path_for(config, uid),
+            frame_count = get_frame_count(_path_for(config, uid)),
+            w = get_w(_path_for(config, uid)),
+            h = get_h(_path_for(config, uid)),
+            has_audio = False,
+            is_stereo = False,
+        )
+        for uid in uids
+    ]
+    if config.exclude_no_audio:
+        return [v for v in videos if v.has_audio]
+
+    return videos
+
+
+def get_videos(config: FeatureExtractConfig) -> Tuple[List[Video], List[Video]]:
+    """
+    Return (videos_to_process, all_videos)
+    """
+    possibly_filtered_videos = _videos(config.io, unfiltered=False)
+    all_videos = _videos(config.io, unfiltered=True)
+    if config.io.video_limit > 0:
+        random.shuffle(possibly_filtered_videos)
+        return possibly_filtered_videos[0 : config.io.video_limit], all_videos
+    return possibly_filtered_videos, all_videos
+
+
 @hydra.main(config_path="configs", config_name=None)
 def test_load_config(config: FeatureExtractConfig):
     print(
-        f"""
-    Config:
-
-{OmegaConf.to_yaml(config)}
-    """
+            f"""
+                Config:
+                
+                {OmegaConf.to_yaml(config)}
+             """
     )
 
 
 if __name__ == "__main__":
-    from models.slowfast import ModelConfig
-
     cs = ConfigStore.instance()
     cs.store(
         name="default",
@@ -282,5 +276,4 @@ if __name__ == "__main__":
             model_config=ModelConfig(),
         ),
     )
-
     test_load_config()  # pyre-ignore
