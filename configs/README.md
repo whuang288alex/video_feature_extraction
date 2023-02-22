@@ -35,3 +35,34 @@
 - mean & std: the mean and  standard deviation used for standardizing input, should be the same as the one used when traning the original model
 
 - model_module_str: the python file location
+
+# Bugs to be fixed
+
+Changing num_worker and batch_size may lead to some errors (the exact number might varies across machines). 
+
+- clip	
+  - only works if num_worker <= 8 for batch_size = 32
+  - only works if batch_size <= 32
+
+- slowfast
+  - only works if num_worker <= 4 for batch_size = 64
+  - only works if batch_size <= 64
+ 
+- i3d
+  - only works if num_worker <= 2 for batch_size = 32
+  - only works if batch_size <= 32
+
+- c3d
+  - only works if num_worker <= 8 for batch_size = 32
+  - only works if batch_size <= 32
+
+- mvit
+  - only works if num_worker <= 8 for batch_size = 32
+  - only works if batch_size <= 32
+
+- omnivore
+  - only works if num_worker <= 8 for batch_size = 4
+  - only works if batch_size <= 4
+
+- egovlp 
+  - only works for batch_size = 1
