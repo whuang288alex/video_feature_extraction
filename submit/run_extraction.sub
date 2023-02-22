@@ -19,4 +19,4 @@ request_disk = 30GB
 requirements =  (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
 require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
 
-queue config from cmd.txt
+queue config from config_name.txt

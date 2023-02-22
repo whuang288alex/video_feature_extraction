@@ -8,10 +8,15 @@ conda pack -n feature_extraction
 chmod 644 feature_extraction.tar.gz
 ```
 
-- To pack your codes (Please change slowfast_arch to the model that you are using)
+- To pack your codes (Please change i3d_arch to the model that you are using)
+
+
+#### (NOTE: For the code to run on CHTC clusters, you will need to download the pretrained checkpoints and include them in the assets folder. For more instruction, please refer to [models/README](models/README.md))
+
+
 
 ```sh
-tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../configs/ ../models/*.py ../models/slowfast_arch`
+tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../configs/ ../models/*.py ../models/i3d_arch
 ```
 
 - To move those to the staging directory:

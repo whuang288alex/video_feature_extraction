@@ -24,7 +24,7 @@ python -m pip install -r requirements.txt
 
 ## Feature Extraction 
 
-#### (NOTE: for some models, you are REQUIRED to manually download pretrained models for the code to start working. Please refer to [models/README](models/README.md) for more info.)
+#### (NOTE: for some models, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
 
 ```sh
 python slurm.py --config-name slowfast_r101_8x8

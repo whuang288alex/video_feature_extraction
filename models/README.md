@@ -6,7 +6,7 @@
 
 - Please download the <a href = "https://drive.google.com/drive/folders/1Qe_9XLUJELB69gYwSpAo1DU3yZ64BOpg"> weights </a>and add them to "./models/model_name_arch/assets'
 
-- Set the variable "hub_path" and "pretrained_dataset" in the config file to your desired pretrained model name.
+- Set the variable "hub_path" or "pretrained_dataset" in the config file to your desired pretrained model name.
 
 # Adding a model
 
