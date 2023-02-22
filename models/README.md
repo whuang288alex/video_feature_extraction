@@ -1,13 +1,3 @@
-# Using pretrained models
-
-### Models that REQUIRE you to manually download weights includes: egovlp, i3d, and c3d
-
-- If you want to use the local weights (either pretrained or fine-tuned), set the variable 'use_remote' in config files to false.
-
-- Please download the <a href = "https://drive.google.com/drive/folders/1Qe_9XLUJELB69gYwSpAo1DU3yZ64BOpg"> weights </a>and add them to "./models/model_name_arch/assets'
-
-- Set the variable "hub_path" or "pretrained_dataset" in the config file to your desired pretrained model name.
-
 # Adding a model
 
 - Create a python file with model name as file name, and include the following methods
@@ -29,3 +19,15 @@
   - Mirror
   
   - ThreeCrop
+ 
+# Using Local Checkpoints
+
+#### NOTE: Models that REQUIRE you to manually download checkpoints include: egovlp, i3d, and c3d
+
+If you want to use the local checkpoints (either pretrained or fine-tuned)
+
+1. Set the variable `use_remote` in config files to false.
+
+2. Download the <a href = "https://drive.google.com/drive/folders/1Qe_9XLUJELB69gYwSpAo1DU3yZ64BOpg"> checkpoints </a>and add them to `./models/model_name_arch/assets`
+
+3. Set the variable `hub_path` or `pretrained_dataset` in the config file to your desired pretrained checkpoints name.
