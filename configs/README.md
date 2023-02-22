@@ -65,4 +65,5 @@ Changing num_worker and batch_size may lead to some errors (the exact number mig
   - only works if batch_size <= 4
 
 - egovlp 
-  - only works for batch_size = 1
+  - only works if num_worker <= 8 for batch_size = 128
+  - only works if batch_size <= 128
