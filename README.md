@@ -24,8 +24,6 @@ python -m pip install -r requirements.txt
 
 ## Feature Extraction 
 
-#### (NOTE: for some models, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
-
 ```sh
 python slurm.py --config-name slowfast_r101_8x8
 ```
@@ -47,6 +45,10 @@ Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of
 ```bash
 python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
 ```
+
+
+#### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
+
 
 ## Adding a Model
 
