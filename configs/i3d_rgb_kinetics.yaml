@@ -2,7 +2,7 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /inputs/videos_ego4d
+  video_dir_path: /inputs/videos_thumos
   ego4d_download_dir: /inputs
   uid_list: null
   video_limit: -1
@@ -15,7 +15,7 @@ inference_config:
   batch_size: 32
   num_workers: 2
   prefetch_factor: 2
-  fps: 30 # 25 for training
+  fps: 25 # 25 for training
   frame_window: 16  
   stride: 8
   include_audio: false
