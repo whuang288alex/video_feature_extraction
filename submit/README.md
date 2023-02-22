@@ -16,11 +16,16 @@ chmod 644 feature_extraction.tar.gz
 ```sh
 tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../configs/ ../models/*.py ../models/i3d_arch
 ```
+```sh
+tar -zcvf inputs.tar.gz ../inputs
+```
 
 3. To move those to the staging directory:
 
 ```
-mv feature_extraction.tar.gz code.tar.gz /staging/groups/li_group_biostats
+mv feature_extraction.tar.gz  /staging/groups/li_group_biostats
+mv code.tar.gz /staging/groups/li_group_biostats
+mv inputs.tar.gz /staging/groups/li_group_biostats
 ```
 
 4. To specify the config
