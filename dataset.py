@@ -66,7 +66,6 @@ class EncodedVideoCached:
         self.path = path
         self.vid = EncodedVideo.from_path(path, decoder="pyav")
         self.vid._container.seek(0)
-
         self.frame_buffer_size = frame_buffer_size
         self.frame_buffer = []
         self.last_t = None
@@ -141,7 +140,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
 
         for v in videos:
             self.clips.extend(
-                list(self.get_all_clips(v, self.encoded_videos[v.uid].duration, sampler))
+                list(self.get_all_clips(v, self.encoded_videos[v.uid].duration, sampler[v.uid]))
             )
 
     def __len__(self):
@@ -197,21 +196,23 @@ def create_dset(
 ) -> IndexableVideoDataset:
     assert isinstance(videos[0], Video)
 
-    clip_sampler = UniformClipSampler(
-        
-        # how long each clip is in seconds
-        clip_duration=Fraction(
-            config.inference_config.frame_window, config.inference_config.fps
+    clip_sampler = dict()
+    for v in videos:
+        clip_sampler[v.uid] = UniformClipSampler(
+            # how long each clip is in seconds
+            clip_duration=Fraction(
+                config.inference_config.frame_window,  v.frame_rate
+            )
+            if isinstance(config.inference_config.frame_window, int)
+            else config.inference_config.frame_window,
+            
+            # how long each stride is in seconds
+            stride = Fraction(config.inference_config.stride,  v.frame_rate)
+            if isinstance(config.inference_config.stride, int)
+            else config.inference_config.stride,
+            backpad_last=True,
         )
-        if isinstance(config.inference_config.frame_window, int)
-        else config.inference_config.frame_window,
         
-        # how long each stride is in seconds
-        stride=Fraction(config.inference_config.stride, config.inference_config.fps)
-        if isinstance(config.inference_config.stride, int)
-        else config.inference_config.stride,
-        backpad_last=True,
-    )
 
     transforms_to_use = [
         get_transform(config),

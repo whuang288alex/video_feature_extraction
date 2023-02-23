@@ -133,6 +133,7 @@ class Video:
     h: int
     has_audio: bool
     is_stereo: bool = False
+    frame_rate: int = 30
 
     @property
     def dim(self) -> int:
@@ -213,6 +214,12 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
         length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
         return length
 
+    def get_frame_rate(video_path):
+        vid = cv2.VideoCapture(video_path)
+        fps = vid.get(cv2.CAP_PROP_FPS)
+        # print(fps)
+        return int(fps)
+    
     def get_w(video_path):
         vid = cv2.VideoCapture(video_path)
         width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -233,6 +240,7 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
             h = get_h(_path_for(config, uid)),
             has_audio = False,
             is_stereo = False,
+            frame_rate = get_frame_rate(_path_for(config, uid))
         )
         for uid in uids
     ]

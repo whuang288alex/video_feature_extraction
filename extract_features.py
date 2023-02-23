@@ -186,6 +186,8 @@ def extract_features(
     for v in videos:
         assert v.uid not in uid_to_video_clips
         uid_to_video_clips[v.uid] = v
+
+    # config.inference_config.fps = v.frame_rate
     
     # calculate the total number of clip and the number of batches
     batch_size = config.inference_config.batch_size
@@ -196,8 +198,7 @@ def extract_features(
     # print out stats for this video
     if not silent:
         print(
-            f"\nextracting features - there are {total_num_clips} for this video.\n",
-            f"there will be {batch_num} batches.\n",
+            f"Extracting features - there are {total_num_clips} for this video.\nThere should be {batch_num} batches.",
             flush=True,
         )
 
@@ -306,7 +307,6 @@ def perform_feature_extraction(
     for vid in tqdm(videos, desc="videos"):
         
         gc.collect()
-
         # Extract feature from "A VIDEO"
         feature_extract_result = extract_features(
             [vid],
@@ -328,6 +328,8 @@ def perform_feature_extraction(
             feature_extract_result.time_stats.transfer_device
         )
         time_stats.forward_pass.extend(feature_extract_result.time_stats.forward_pass)
+        print("\n\n\n")
+        
     o2 = time.time()
     time_stats.overall = o2 - o1
     return time_stats
