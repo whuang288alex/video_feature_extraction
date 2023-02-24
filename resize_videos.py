@@ -1,6 +1,6 @@
-import os
-import glob
 import argparse
+import glob
+import os
 import subprocess
 
 exts = ['avi', 'mp4', 'mkv', 'webm']

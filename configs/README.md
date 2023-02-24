@@ -38,32 +38,35 @@
 
 # Bugs to be fixed
 
-Changing num_worker and batch_size may lead to some errors (the exact number might varies across machines). 
+Finding the best num_worker and batch_size can be kind of tricky, as changing num_worker and batch_size can lead to some unexpected behavior from pytorch dataloader due to machine performance issue (the exact number might varies across machines, below is the result on the shared GPU when no one else is using it). 
+
+Rules of thumb: first set num_worker to zero and adjust batch_size to a number that doesn't cause "CUDA out of memory error".
+Then, fix batch_size and adjust num_worker to a number that doesn't cause "Worker getting killed error". If setting num_worker is too cumbersome for you, just set it to zero as this should always work.
 
 - clip	
-  - only works if num_worker <= 8 for batch_size = 32
   - only works if batch_size <= 32
+  - only works if num_worker <= 8 for batch_size = 32
 
 - slowfast
-  - only works if num_worker <= 4 for batch_size = 64
   - only works if batch_size <= 64
+  - only works if num_worker <= 4 for batch_size = 64
  
 - i3d
-  - only works if num_worker <= 2 for batch_size = 32
   - only works if batch_size <= 32
+  - only works if num_worker <= 2 for batch_size = 32
 
 - c3d
-  - only works if num_worker <= 8 for batch_size = 32
   - only works if batch_size <= 32
+  - only works if num_worker <= 8 for batch_size = 32
 
 - mvit
-  - only works if num_worker <= 8 for batch_size = 32
   - only works if batch_size <= 32
+  - only works if num_worker <= 8 for batch_size = 32
 
 - omnivore
-  - only works if num_worker <= 8 for batch_size = 4
   - only works if batch_size <= 4
+  - only works if num_worker <= 8 for batch_size = 4
 
 - egovlp 
-  - only works if num_worker <= 8 for batch_size = 128
   - only works if batch_size <= 128
+  - only works if num_worker <= 8 for batch_size = 128

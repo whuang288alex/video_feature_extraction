@@ -15,7 +15,6 @@ inference_config:
   batch_size: 32
   num_workers: 2
   prefetch_factor: 2
-  fps: 30 # 25 for training
   frame_window: 16  
   stride: 8
   include_audio: false
