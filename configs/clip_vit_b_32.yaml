@@ -2,7 +2,7 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /inputs/videos_thumos
+  video_dir_path: /inputs/videos_ego4d
   ego4d_download_dir: /inputs
   uid_list: null
   video_limit: -1
@@ -13,7 +13,7 @@ io:
 inference_config:
   device: cuda
   batch_size: 32
-  num_workers: 4
+  num_workers: 8
   prefetch_factor: 2
   fps: 30
   frame_window: 8  
