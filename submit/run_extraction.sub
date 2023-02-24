@@ -12,7 +12,7 @@ when_to_transfer_output = ON_EXIT
 request_gpus = 1
 request_cpus = 1
 request_memory = 50GB
-request_disk = 60GB
+request_disk = 128GB
 
 +WantGPULab = true
 +GPUJobLength = "short"

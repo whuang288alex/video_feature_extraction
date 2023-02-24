@@ -14,7 +14,7 @@ chmod 644 feature_extraction.tar.gz
 #### (NOTE: For the code to run on CHTC clusters, you will need to download the pretrained checkpoints and include them in the assets folder. For more instruction, please refer to [models/README](models/README.md))
 
 ```sh
-tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../configs/ ../models/*.py ../models/i3d_arch
+tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../get_videos.py ../configs/ ../models/*.py ../models/i3d_arch
 ```
 ```sh
 tar -zcvf inputs.tar.gz ../inputs
