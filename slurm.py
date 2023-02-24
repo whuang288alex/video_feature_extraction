@@ -1,31 +1,20 @@
 #!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 
-import os, sys
-sys.path.insert(0, os.getcwd())
+import os
+import sys
 
-import argparse
-import datetime
-import functools
-import math
-from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import List
 
 import hydra
-
-import numpy as np
-import submitit
 import torch
-from config import (
-    FeatureExtractConfig,
-    get_videos,
-    ScheduleConfig,
-    Video,
-)
-from extract_features import num_fvs, perform_feature_extraction
-from hydra.core.config_store import ConfigStore
 from omegaconf import OmegaConf
-from tqdm import tqdm
+from get_videos import get_videos
+from config import FeatureExtractConfig, Video
+from extract_features import perform_feature_extraction
+
+sys.path.insert(0, os.getcwd())
+root =  os.path.dirname(os.path.abspath(__file__))
 
 def print_stats_for_videos(
     config: FeatureExtractConfig, all_videos: List[Video], videos: List[Video]
@@ -110,6 +99,6 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
     # print stats for "ALL VIDEOS"
     print_completion_stats([results])
 
+
 if __name__ == "__main__":
-    root =  os.path.dirname(os.path.abspath(__file__))
     schedule_feature_extraction()
