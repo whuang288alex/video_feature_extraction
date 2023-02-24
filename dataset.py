@@ -166,20 +166,20 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         # get the clip according to calculated start time and end time
         encoded_video = self.encoded_videos[video.uid] # this is the encoded and cached video
         datum = encoded_video.get_clip(clip_start, clip_end)
-        v_frames = datum["video"]
-
 
         # if this clip does not have enough frame, pad it with zeros
-        if datum['num_frames'] != self.config.inference_config.frame_window:
+        if datum['num_frames'] < self.config.inference_config.frame_window:
             pad = (self.config.inference_config.frame_window - datum['num_frames'])
-            datum["video"] = torch.cat([datum["video"], torch.zeros(pad, *datum["video"].shape[1:])])
-            datum['num_frames'] = len(datum["video"])
-        
-        
+            datum["video"] = torch.cat([datum["video"], torch.zeros(3, pad, *datum["video"].shape[2:])], dim = 1)
+            datum['num_frames'] = datum["video"].shape[1]
+
+        elif datum['num_frames'] > self.config.inference_config.frame_window:
+            datum["video"] = datum["video"][:, :self.config.inference_config.frame_window]
+            datum['num_frames'] = datum["video"].shape[1]
+    
         # force checking the number of frames to guard against missing frames
         assert datum['num_frames'] == self.config.inference_config.frame_window
-
-
+        
         # the stats for this clip
         sample_dict = {
             "video_name": video.uid,
@@ -191,8 +191,8 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             "clip_end_sec": float(clip_end),
         }
         
-        if v_frames is not None:
-            sample_dict["video"] = v_frames
+        if datum["video"] is not None:
+            sample_dict["video"] = datum["video"]
         else:
             raise AssertionError("Audio not implemented")
         
@@ -200,9 +200,6 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         sample_dict = self.transform(sample_dict)
         return sample_dict
     
-    
-
-
 def create_dset(
     videos: List[Video], config: FeatureExtractConfig
 ) -> IndexableVideoDataset:

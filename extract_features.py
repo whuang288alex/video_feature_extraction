@@ -81,7 +81,7 @@ def _extract_features(
     data = create_data_loader_or_dset([video], config)
     t1 = time.time()
     
-    # x.shape: bs, c, T, w, h (x is clips for a batch)
+    # x["video"].shape: bs, crop, c, T, w, h (x is clips for a batch)
     for i, x in enumerate(data):
         
         # handle EOF error
@@ -290,6 +290,7 @@ def perform_feature_extraction(
         print("")
         print("")
         print("")
+        print(vid.uid)
         gc.collect()
         
         # Extract feature from "A VIDEO"
