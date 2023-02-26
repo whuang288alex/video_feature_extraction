@@ -11,11 +11,11 @@ when_to_transfer_output = ON_EXIT
 
 request_gpus = 1
 request_cpus = 1
-request_memory = 50GB
+request_memory = 200GB
 request_disk = 128GB
 
 +WantGPULab = true
-+GPUJobLength = "short"
++GPUJobLength = "medium"
 requirements =  (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
 require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
 

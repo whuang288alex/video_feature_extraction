@@ -21,6 +21,7 @@ tar -xzf code.tar.gz
 
 # extract inputs from the tar file
 tar -xzf THUMOS14_val.tar.gz
+# tar -xzf inputs.tar.gz
 
 # run the extraction
 python slurm.py --config-name $1
