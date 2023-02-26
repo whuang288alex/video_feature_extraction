@@ -1,22 +1,20 @@
-# Adding a config file
+# Modifying/Adding config files
 
-<b>Note: </b> here, a  video is divided into multiple "clips", and the result got from each "clip" is treated as a feature of the video
+<b>Note: </b> here, a video is segmented into multiple "clips", and a feature will be extraced from each "clip".
 
-- fps: The number of frames per second in the input video
+- video_dir_path: The directory where the input videos are stored (all the videos in this directory will be processed)
 
-- video_dir_path: The path where the input video is stored
+- out_path: The directory where the extraced features will be stored
 
-- out_path: The path where the extraced features will be stored
+- batch_size: The number of "clip" that get fed into the model at each iteration
 
-- batch_size: The number of clip that get fed into the model each time
+- frame_window: The number of frames in a "clip" 
 
-- frame_window: The number of frames in a clip 
+- stride: The number of frames between the first frame of two neighboring "clips"
 
-- stride: The number of frames between the first frame of two neighboring clips
+- use_remote: whether you want to use a remote checkpoints or a local one
 
-- use_remote: determine if you are going to use a remote pretrained model or a local one
-
-- hub_path: This is the url where you load the pretrained models (can be either local or remote depending on "use_remote")
+- hub_path: the name of the checkpoints (can be either local or remote depending on "use_remote")
 
 - side_size: This is the size that the shorter side of the input video will be resized to
 
@@ -30,18 +28,13 @@
 
 - crop_size: the size of the crop mentioned above.
 
-- dilation: number of frame to extract in each clip
+- mean, std: the mean and standard deviation used for standardizing input
 
-- mean & std: the mean and  standard deviation used for standardizing input, should be the same as the one used when traning the original model
+- model_module_str: the location of the python file where you implement the model (typically under `models/`)
 
-- model_module_str: the python file location
+# For changing num_worker and batch_size
 
-# Bugs to be fixed
-
-Finding the best num_worker and batch_size can be kind of tricky, as changing num_worker and batch_size can lead to some unexpected behavior from pytorch dataloader due to machine performance issue (the exact number might varies across machines, below is the result on the shared GPU when no one else is using it). 
-
-Rules of thumb: first set num_worker to zero and adjust batch_size to a number that doesn't cause "CUDA out of memory error".
-Then, fix batch_size and adjust num_worker to a number that doesn't cause "Worker getting killed error". If setting num_worker is too cumbersome for you, just set it to zero as this should always work.
+Finding the best num_worker and batch_size can be kind of tricky, as changing num_worker and batch_size can lead to some unexpected behavior from pytorch dataloader due to machine related issues (the exact number might varies across machines, below is the result on the shared GPU when no one else is using it). 
 
 - clip	
   - only works if batch_size <= 32
