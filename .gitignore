@@ -7,6 +7,5 @@ submit/*.log
 submit/*.err
 submit/*.out
 submit/*.py
-models/*/assets/*.pth
 features/
 validation/
