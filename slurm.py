@@ -13,6 +13,7 @@ from get_videos import get_videos
 from config import FeatureExtractConfig, Video
 from extract_features import perform_feature_extraction
 
+
 sys.path.insert(0, os.getcwd())
 root =  os.path.dirname(os.path.abspath(__file__))
 
@@ -23,15 +24,13 @@ def print_stats_for_videos(
     assert isinstance(all_videos[0], Video)
     assert isinstance(videos[0], Video)
     total_secs_uncompleted = sum(v.frame_count * config.fps for v in videos)
-    secs_uncompleted = sum(v.frame_count * config.fps for v in all_videos)
-
+    
     print(
         f"""
     Total Number of Videos = {len(all_videos)}
     Incomplete videos = {len(videos)}
 
     Total Seconds = {total_secs_uncompleted}
-    Incomplete seconds = {secs_uncompleted} = {secs_uncompleted/total_secs_uncompleted * 100:.2f}%
     """
     )
 
@@ -72,6 +71,7 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
     
     # make file path relative
     config.io.video_dir_path = root + config.io.video_dir_path
+    assert os.path.exists(config.io.video_dir_path),  "video path provided in the config file does not exist"
     config.io.ego4d_download_dir = root + config.io.ego4d_download_dir
     config.io.out_path = root + config.io.out_path
     config.io.debug_path = root + config.io.debug_path
@@ -87,6 +87,7 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
     # generate a config file for "EACH EXTRACTION"
     with open(f"{config.io.out_path}/config.yaml", "w") as out_f:
         out_f.write(OmegaConf.to_yaml(config))
+    
     if len(videos) == 0:
         return
     

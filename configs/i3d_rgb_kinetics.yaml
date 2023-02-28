@@ -2,7 +2,7 @@ fps: 30
 force_yes: false
 io:
   filter_completed: true
-  video_dir_path: /validation
+  video_dir_path: /inputs/validation
   ego4d_download_dir: /inputs
   uid_list: null
   video_limit: -1
@@ -16,7 +16,7 @@ inference_config:
   num_workers: 2
   prefetch_factor: 2
   frame_window: 16  
-  stride: 8
+  stride: 4
   include_audio: false
   include_video: true
   norm_config:

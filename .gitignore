@@ -1,12 +1,10 @@
 outputs/
 .vscode/
 __pycache__/
-*.py[cod]
-submit/*.tar.gz
 submit/*.log
 submit/*.err
 submit/*.out
 submit/*.py
 models/*/assets/*
+inputs/
 features/
-validation/
