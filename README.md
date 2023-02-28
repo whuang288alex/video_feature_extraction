@@ -38,11 +38,7 @@ python slurm.py --config-name i3d_rgb_kinetics
 
 ### 2. To run on a subset of videos
 
-Provide `io.uid_list` in the YAML file (`InputOutputConfig.uid_list`) or as a list of arguments on the CLI:
-
-```bash
-python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
-```
+Provide `io.uid_list` in the YAML file (`InputOutputConfig.uid_list`) 
 
 
 #### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
