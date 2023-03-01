@@ -32,8 +32,9 @@ mv val_1 videos
 # run the extraction
 python slurm.py --config-name $1
 
-# remove other files to prevent them from being transferred back
-rm ./*.py
-
-
+# zip the results
 tar -zcvf val_10.tar.gz ./*.pt
+
+# remove other files
+rm ./*.py ./*.pt config.yaml
+
