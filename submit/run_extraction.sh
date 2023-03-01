@@ -29,6 +29,6 @@ mv val_1 videos
 # run the extraction
 python slurm.py --config-name $1
 
-
+# remove other files
 rm ./*.py 
 tar -zcvf val_10.tar.gz ./*.pt
