@@ -33,7 +33,7 @@ mv val_1 videos
 python slurm.py --config-name $1
 
 # zip the results
-tar -zcvf val_10.tar.gz ./*.pt
+tar -zcvf val_1.tar.gz ./*.pt
 
 # remove other files
 rm ./*.py ./*.pt config.yaml
