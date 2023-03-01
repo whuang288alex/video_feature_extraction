@@ -18,9 +18,7 @@ python -m pip install -r requirements.txt
     
 - ` inputs/`: This is the default directory where you store the input videos.
     
-- ` features/`: This is the default directory where you store the features you extract.
-    
-- ` submit/`: This directory contains the code to submit computation to CHTC for throughput computing
+- ` submit/`: This directory contains the code to submit computation to CHTC for throughput computing.
 
 ## Feature Extraction 
 
@@ -30,21 +28,17 @@ python slurm.py --config-name slowfast_r101_8x8
 
 ### 1. To run with a different configuration
 
-Provide `--config-name "name"`  where `"name"` is the name of the configuration file without the `.yaml` extension. 
+Change `--config-name` to the name of the desired configuration file (under `configs/`) 
 
-For example, to run the CLIP model:
+For example, to use the I3D model:
 
 ```bash
-python slurm.py --config-name clip_vit_b_32
+python slurm.py --config-name i3d_rgb_kinetics
 ```
 
 ### 2. To run on a subset of videos
 
-Provide `io.uid_list` in the YAML (`InputOutputConfig.uid_list`) or as a list of arguments on the CLI:
-
-```bash
-python slurm.py --config-name slowfast_r101_8x8 io.uid_list="[000a3525-6c98-4650-aaab-be7d2c7b9402]"
-```
+Provide `io.uid_list` in the YAML file (`InputOutputConfig.uid_list`) 
 
 
 #### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
