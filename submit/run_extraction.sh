@@ -8,27 +8,27 @@ ENVDIR=$ENVNAME
 # get input files from staging directory
 cp /staging/groups/li_group_biostats/feature_extraction.tar.gz ./
 cp /staging/groups/li_group_biostats/code.tar.gz ./
-cp /staging/groups/li_group_biostats/THUMOS14_val.tar.gz ./
 
 # extract and set up the environment
 export PATH
 mkdir $ENVDIR
 tar -xzf $ENVNAME.tar.gz -C $ENVDIR
 . $ENVDIR/bin/activate
+rm feature_extraction.tar.gz
 
 # extract codes from the tar file
 tar -xzf code.tar.gz
+rm code.tar.gz
 
 # extract inputs from the tar file
-tar -xzf THUMOS14_val.tar.gz
-# tar -xzf inputs.tar.gz
+cp /staging/groups/li_group_biostats/val_1.tar.gz ./
+tar -xzf val_1.tar.gz
+rm  val_1.tar.gz
+mv val_1 videos
 
 # run the extraction
 python slurm.py --config-name $1
 
-rm code.tar.gz feature_extraction.tar.gz THUMOS14_val.tar.gz
-mkdir code
-rm ./*.py 
-mv ./features/*/*.pt ./
 
-tar -zcvf results.tar.gz ./*.pt
+rm ./*.py 
+tar -zcvf val_10.tar.gz ./*.pt

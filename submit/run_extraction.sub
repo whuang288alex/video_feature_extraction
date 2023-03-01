@@ -3,20 +3,30 @@ log = log_$(Cluster).log
 output = output_$(Cluster)_$(Process).out
 error = error_$(Cluster)_$(Process).err
 
+
+
 executable = run_extraction.sh
 arguments = $(config)
+
+
 
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 
+
+
 request_gpus = 1
 request_cpus = 1
-request_memory = 200GB
+request_memory = 40GB
 request_disk = 128GB
+
+
 
 +WantGPULab = true
 +GPUJobLength = "medium"
 requirements =  (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
 require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
+
+
 
 queue config from config_name.txt
