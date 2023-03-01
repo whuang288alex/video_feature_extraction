@@ -26,7 +26,7 @@ python -m pip install -r requirements.txt
 python slurm.py --config-name slowfast_r101_8x8
 ```
 
-### 1. To run with a different configuration
+###  To run with a different configuration
 
 Change `--config-name` to the name of the desired configuration file (under `configs/`) 
 
@@ -36,9 +36,11 @@ For example, to use the I3D model:
 python slurm.py --config-name i3d_rgb_kinetics
 ```
 
-### 2. To run on a subset of videos
+To use the CLIP model:
 
-Provide `io.uid_list` in the YAML file (`InputOutputConfig.uid_list`) 
+```bash
+python slurm.py --config-name clip_vit_b_32
+```
 
 
 #### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)

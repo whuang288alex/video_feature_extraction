@@ -23,14 +23,11 @@ def print_stats_for_videos(
     # stats for uids
     assert isinstance(all_videos[0], Video)
     assert isinstance(videos[0], Video)
-    total_secs_uncompleted = sum(v.frame_count * config.fps for v in videos)
-    
+
     print(
         f"""
     Total Number of Videos = {len(all_videos)}
     Incomplete videos = {len(videos)}
-
-    Total Seconds = {total_secs_uncompleted}
     """
     )
 
@@ -70,36 +67,30 @@ def print_completion_stats(results):
 def schedule_feature_extraction(config: FeatureExtractConfig):
     
     # make file path relative
-    config.io.video_dir_path = root + config.io.video_dir_path
+    config.io.video_dir_path = os.path.join (root, config.io.video_dir_path)
     assert os.path.exists(config.io.video_dir_path),  "The video path provided in the config file does not exist."
     
-    config.io.out_path = root + config.io.out_path
+    config.io.out_path = os.path.join (root, config.io.out_path)
     os.makedirs(config.io.out_path, exist_ok=True)
     
-    config.io.ego4d_download_dir = root + config.io.ego4d_download_dir
-    config.io.debug_path = root + config.io.debug_path
+    config.io.ego4d_download_dir = os.path.join (root, config.io.ego4d_download_dir)
+    config.io.debug_path = os.path.join (root, config.io.debug_path)
     
     print("###################### Feature Extraction Config ####################")
     print(OmegaConf.to_yaml(config))
     print("############################################################")
 
-    # load "ALL VIDEOS"
+    # load all the "videos" in the specified directory
     videos, all_videos = get_videos(config)
     
-    # generate a config file for "this extraction"
     with open(f"{config.io.out_path}/config.yaml", "w") as out_f:
         out_f.write(OmegaConf.to_yaml(config))
     
     if len(videos) == 0:
         return
     
-    # print stats for  "ALL VIDEOS"
     print_stats_for_videos(config, all_videos=all_videos, videos=videos)
-
-    # get results for "ALL VIDEOS"
     results = perform_feature_extraction(videos, config)
-    
-    # print stats for "ALL VIDEOS"
     print_completion_stats([results])
 
 

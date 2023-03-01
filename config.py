@@ -10,6 +10,8 @@ from omegaconf import OmegaConf
 from torchaudio.transforms import Resample
 from torchvision.transforms import Compose, Lambda
 
+import warnings
+warnings.filterwarnings("ignore")
 
 @dataclass
 class NormalizationConfig:

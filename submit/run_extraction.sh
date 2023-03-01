@@ -20,7 +20,10 @@ rm feature_extraction.tar.gz
 tar -xzf code.tar.gz
 rm code.tar.gz
 
-# extract inputs from the tar file
+######################################
+#  extract inputs from the tar file  #
+#  TODO: modify this part if needed  #
+######################################
 cp /staging/groups/li_group_biostats/val_1.tar.gz ./
 tar -xzf val_1.tar.gz
 rm  val_1.tar.gz
@@ -29,6 +32,8 @@ mv val_1 videos
 # run the extraction
 python slurm.py --config-name $1
 
-# remove other files
-rm ./*.py 
+# remove other files to prevent them from being transferred back
+rm ./*.py
+
+
 tar -zcvf val_10.tar.gz ./*.pt

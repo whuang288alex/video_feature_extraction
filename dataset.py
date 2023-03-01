@@ -15,8 +15,10 @@ from torchvision.transforms import Compose
 
 from config import FeatureExtractConfig, Video, get_transform
 
-
-# Encode "EACH VIDEO" one by one and store it. "EACH CLIP" can be accessed according to start time and end time 
+import warnings
+warnings.filterwarnings("ignore")
+    
+# Encode a single "video" and store it. Only decode it when get_frames is called (once for each "clip")
 class EncodedVideoCached:
     
     def __init__(self, path, frame_buffer_size=100):
@@ -27,7 +29,7 @@ class EncodedVideoCached:
         self.frame_buffer = []
         self.last_t = None
 
-    # this function is used to get "A CLIP" based on start_time and end_time
+    # this function is used to get a "clip" from the encoded video based on start_time and end_time
     def get_clip(self, t1, t2):
         if self.last_t is not None and t1 < self.last_t:
             raise AssertionError("cannot seek backward")
@@ -54,7 +56,7 @@ class EncodedVideoCached:
             "audio": None,
         }
         
-    # this function is used to get "FRAMES" for "A CLIP" based on start_time and end_time
+    # this function is used to get "frames" for a "clip" based on start_time and end_time
     def get_frames(self, container, t1, t2, buffer, max_buffer_size):
         ret = []
         tb = container.streams.video[0].time_base
@@ -106,35 +108,33 @@ class EncodedVideoCached:
         return vstream.duration * vstream.time_base
 
 
-# Returns a dataset for "ALL VIDEOs". Each entry corresponds to "A CLIP" (hence, needs "uid" and "clip time" to access)
+# Returns a dataset for a single "video". Each entry corresponds to a "clip"
 class IndexableVideoDataset(torch.utils.data.Dataset):
 
     def __init__(
-        self, config: FeatureExtractConfig, videos: List[Video], sampler, transform
+        self, config: FeatureExtractConfig, video: Video, sampler, transform
     ):
         assert (
             config.inference_config.include_audio
             ^ config.inference_config.include_video
-        ) 
+        ), "cannot extract features from both audio and video at the same time"
+        
         """
         cannot include audio and video at the same time
         """
         self.config = config
-        self.clips = []
         self.sampler = sampler
         self.transform = transform
 
         if self.config.inference_config.include_video:
-            self.encoded_videos = {v.uid: EncodedVideoCached(v.path, config.inference_config.frame_window + 10) for v in videos}
+            self.encoded_videos = EncodedVideoCached(video.path, config.inference_config.frame_window + 10)
         else:
             raise AssertionError("Audio not implemented")
 
-        for v in videos:
-            self.clips.extend(
-                list(self.get_all_clips(v, self.encoded_videos[v.uid].duration, sampler[v.uid]))
-            )
+        self.clips = list(self.get_all_clips(video, self.encoded_videos.duration, sampler))
 
-    # this function get all clips from "A VIDEO" accoding to the sampler
+
+    # this function get all "clips" from the "video" accoding to the sampler
     def get_all_clips(self, video, video_length, sampler):
         last_clip_time = 0.0
         annotation = {}
@@ -154,7 +154,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         return len(self.clips)
 
     
-    # returns "A CLIP"
+    # returns a single "clip"
     def __getitem__(self, idx):
         video, clip = self.clips[idx]
         (
@@ -165,8 +165,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             is_last_clip,
         ) = clip
 
-        # get the clip according to calculated start time and end time
-        encoded_video = self.encoded_videos[video.uid] # this is the encoded and cached video
+        encoded_video = self.encoded_videos # this is the EncodedVideoCached instance
         datum = encoded_video.get_clip(clip_start, clip_end)
 
         # if this clip does not have enough frame, pad it with zeros
@@ -175,6 +174,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             datum["video"] = torch.cat([datum["video"], torch.zeros(3, pad, *datum["video"].shape[2:])], dim = 1)
             datum['num_frames'] = datum["video"].shape[1]
 
+        # if this clip has too many frames, only get frame_window frames
         elif datum['num_frames'] > self.config.inference_config.frame_window:
             datum["video"] = datum["video"][:, :self.config.inference_config.frame_window]
             datum['num_frames'] = datum["video"].shape[1]
@@ -182,7 +182,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         # force checking the number of frames to guard against missing frames
         assert datum['num_frames'] == self.config.inference_config.frame_window
         
-        # the stats for this clip
+        # the info for this clip
         sample_dict = {
             "video_name": video.uid,
             "video_index": idx,
@@ -198,50 +198,44 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         else:
             raise AssertionError("Audio not implemented")
         
-        # apply transform at the "CLIP LEVEL"
+        # apply transform at the "clip" level
         sample_dict = self.transform(sample_dict)
         return sample_dict
     
 def create_dset(
-    videos: List[Video], config: FeatureExtractConfig
+    video: Video, config: FeatureExtractConfig
 ) -> IndexableVideoDataset:
-    assert isinstance(videos[0], Video)
-
-    # create clip_sampler seperately for each video to accommodate to dataset with videos of different fps
-    clip_sampler = dict()
-    for v in videos:
-        clip_sampler[v.uid] = UniformClipSampler(
-            # how long each clip is in seconds
-            clip_duration=Fraction(
-                config.inference_config.frame_window,  Fraction(v.frame_rate)
-            )
-            if isinstance(config.inference_config.frame_window, int)
-            else config.inference_config.frame_window,
-            
-            # how long each stride is in seconds
-            stride = Fraction(config.inference_config.stride,  Fraction(v.frame_rate))
-            if isinstance(config.inference_config.stride, int)
-            else config.inference_config.stride,
-            backpad_last=True,
-        )
-        
-    transforms_to_use = [
-        get_transform(config),
-    ]
+    
     if config.io.debug_mode:
-        transforms_to_use = [
-            ApplyTransformToKey(key="video", transform=ShortSideScale(size=256)),
-        ]
+        raise AssertionError("debug mode not implemented")
+    
+    # this is used to get the time stamps for each "clip"
+    clip_sampler = UniformClipSampler(
+        
+        # how many seconds each clip is in 
+        clip_duration=Fraction(
+            config.inference_config.frame_window,  Fraction(video.frame_rate)
+        )
+        if isinstance(config.inference_config.frame_window, int)
+        else config.inference_config.frame_window,
+        
+        # how many seconds each stride is in
+        stride = Fraction(config.inference_config.stride,  Fraction(video.frame_rate))
+        if isinstance(config.inference_config.stride, int)
+        else config.inference_config.stride,
+        backpad_last=True,
+    )
     
     # return a custom dataset
     return IndexableVideoDataset(
-        config, videos, clip_sampler, Compose(transforms_to_use)
+        config, video, clip_sampler, Compose([get_transform(config),])
     )
 
 
 def create_data_loader(dset, config: FeatureExtractConfig) -> DataLoader:
+    
     if config.inference_config.batch_size == 0:
-        raise AssertionError("not supported")
+        raise AssertionError("batch size zero is not supported") 
     
     return DataLoader(
         dset,
@@ -252,7 +246,7 @@ def create_data_loader(dset, config: FeatureExtractConfig) -> DataLoader:
 
 
 def create_data_loader_or_dset(
-    videos: List[Video], config: FeatureExtractConfig
+    video: Video, config: FeatureExtractConfig
 ) -> Any:
-    dset = create_dset(videos, config)
+    dset = create_dset(video, config)
     return create_data_loader(dset=dset, config=config)

@@ -34,7 +34,7 @@
 
 # For changing num_worker and batch_size
 
-Finding the best num_worker and batch_size can be kind of tricky, as changing num_worker and batch_size can lead to some unexpected behavior from pytorch dataloader due to machine related issues (the exact number might varies across machines, below is the result on the shared GPU when no one else is using it). 
+Finding the best num_worker and batch_size can be kind of tricky, as changing num_worker and batch_size can lead to some unexpected behavior from pytorch dataloader (the exact number might varies across machines, below is the result on the shared GPU when no one else is using it). 
 
 - clip	
   - only works if batch_size <= 32
