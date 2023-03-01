@@ -1,4 +1,3 @@
-force_yes: false
 io:
   filter_completed: true
   video_dir_path: inputs/videos_thumos

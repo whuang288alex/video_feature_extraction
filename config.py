@@ -97,8 +97,6 @@ class FeatureExtractConfig:
     schedule_config: ScheduleConfig
     model_config: BaseModelConfig
     model_module_str: str = ""
-    force_yes: bool = False
-
     
 @dataclass
 class Video:
