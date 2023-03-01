@@ -58,13 +58,13 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
         vid = cv2.VideoCapture(video_path)
         length = vid.get(cv2.CAP_PROP_FRAME_COUNT)
         # print("frame count: ", length)
-        return round(length)
+        return length
     
     def get_frame_rate(video_path):
         vid = cv2.VideoCapture(video_path)
         fps = vid.get(cv2.CAP_PROP_FPS)
         # print("fps: ", fps)
-        return round(fps)
+        return fps
     
     def get_w(video_path):
         vid = cv2.VideoCapture(video_path)

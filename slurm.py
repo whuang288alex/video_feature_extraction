@@ -71,11 +71,13 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
     
     # make file path relative
     config.io.video_dir_path = root + config.io.video_dir_path
-    assert os.path.exists(config.io.video_dir_path),  "video path provided in the config file does not exist"
-    config.io.ego4d_download_dir = root + config.io.ego4d_download_dir
+    assert os.path.exists(config.io.video_dir_path),  "The video path provided in the config file does not exist."
+    
     config.io.out_path = root + config.io.out_path
-    config.io.debug_path = root + config.io.debug_path
     os.makedirs(config.io.out_path, exist_ok=True)
+    
+    config.io.ego4d_download_dir = root + config.io.ego4d_download_dir
+    config.io.debug_path = root + config.io.debug_path
     
     print("###################### Feature Extraction Config ####################")
     print(OmegaConf.to_yaml(config))
@@ -84,7 +86,7 @@ def schedule_feature_extraction(config: FeatureExtractConfig):
     # load "ALL VIDEOS"
     videos, all_videos = get_videos(config)
     
-    # generate a config file for "EACH EXTRACTION"
+    # generate a config file for "this extraction"
     with open(f"{config.io.out_path}/config.yaml", "w") as out_f:
         out_f.write(OmegaConf.to_yaml(config))
     
