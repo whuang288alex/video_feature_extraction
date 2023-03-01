@@ -125,7 +125,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         self.transform = transform
 
         if self.config.inference_config.include_video:
-            self.encoded_videos = {v.uid: EncodedVideoCached(v.path) for v in videos}
+            self.encoded_videos = {v.uid: EncodedVideoCached(v.path, config.inference_config.frame_window + 10) for v in videos}
         else:
             raise AssertionError("Audio not implemented")
 
@@ -147,7 +147,9 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
 
             if clip.is_last_clip:
                 break
+        # print("\nnum_clips: ", n_clips)
             
+
     def __len__(self):
         return len(self.clips)
 
@@ -211,13 +213,13 @@ def create_dset(
         clip_sampler[v.uid] = UniformClipSampler(
             # how long each clip is in seconds
             clip_duration=Fraction(
-                config.inference_config.frame_window,  v.frame_rate
+                config.inference_config.frame_window,  Fraction(v.frame_rate)
             )
             if isinstance(config.inference_config.frame_window, int)
             else config.inference_config.frame_window,
             
             # how long each stride is in seconds
-            stride = Fraction(config.inference_config.stride,  v.frame_rate)
+            stride = Fraction(config.inference_config.stride,  Fraction(v.frame_rate))
             if isinstance(config.inference_config.stride, int)
             else config.inference_config.stride,
             backpad_last=True,

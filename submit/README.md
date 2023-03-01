@@ -15,8 +15,7 @@ chmod 644 feature_extraction.tar.gz
 
 ```sh
 tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../get_videos.py ../configs/ ../models/*.py ../models/i3d_arch
-```
-```sh
+
 tar -zcvf inputs.tar.gz ../inputs
 ```
 
@@ -34,9 +33,8 @@ change the config file name in config_name.txt to your desired config file name.
 
 5. Submit the files
 
-```
-condor_submit run_extraction.sub
-```
+`condor_submit run_extraction.sub`
+
 
 ## Useful Condor commands
 

@@ -5,6 +5,7 @@ import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple
+import math
 
 import cv2
 from config import FeatureExtractConfig, InputOutputConfig, Video
@@ -55,13 +56,15 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
     # calculate video infos for this video
     def get_frame_count(video_path):
         vid = cv2.VideoCapture(video_path)
-        length = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
+        length = vid.get(cv2.CAP_PROP_FRAME_COUNT)
+        # print("frame count: ", length)
         return length
     
     def get_frame_rate(video_path):
         vid = cv2.VideoCapture(video_path)
         fps = vid.get(cv2.CAP_PROP_FPS)
-        return round(fps)
+        # print("fps: ", fps)
+        return fps
     
     def get_w(video_path):
         vid = cv2.VideoCapture(video_path)
