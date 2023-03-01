@@ -1,4 +1,3 @@
-fps: 30
 force_yes: false
 io:
   filter_completed: true

@@ -35,6 +35,9 @@ def print_completion_stats(results):
     time_to_load = []
     time_to_transfer = []
     forward_pass_time = []
+    
+    print("")
+    print("")
     print(
         "overall,save_time,avg_total,avg_load_time,avg_transfer_time,avg_forward_pass"
     )
