@@ -30,13 +30,13 @@ python slurm.py --config-name slowfast_r101_8x8
 
 Change `--config-name` to the name of the desired configuration file (under `configs/`) 
 
-For example, to use the I3D model:
+#### For example, to use the I3D model:
 
 ```bash
 python slurm.py --config-name i3d_rgb_kinetics
 ```
 
-To use the CLIP model:
+#### To use the CLIP model:
 
 ```bash
 python slurm.py --config-name clip_vit_b_32
