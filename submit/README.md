@@ -28,7 +28,7 @@ mv code.tar.gz /staging/groups/li_group_biostats
 
 4. To specify the configuration
 
-change the config file name in config_name.txt to your desired config file name.
+change the config file name in `config_name.txt` to your desired config file name.
 
 5. Submit the files
 
