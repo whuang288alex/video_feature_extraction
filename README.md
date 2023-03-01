@@ -40,6 +40,9 @@ python slurm.py --config-name i3d_rgb_kinetics
 
 Provide `io.uid_list` in the YAML file (`InputOutputConfig.uid_list`) 
 
+```bash
+python slurm.py --config-name i3d_rgb_kinetics
+```
 
 #### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
 
