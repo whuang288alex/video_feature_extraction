@@ -127,7 +127,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         self.transform = transform
 
         if self.config.inference_config.include_video:
-            self.encoded_videos = EncodedVideoCached(video.path, config.inference_config.frame_window + 10)
+            self.encoded_videos = EncodedVideoCached(video.path, 2 * config.inference_config.frame_window)
         else:
             raise AssertionError("Audio not implemented")
 
