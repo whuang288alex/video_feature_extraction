@@ -18,13 +18,8 @@
 
 - side_size: This is the size that the shorter side of the input video will be resized to
 
-- crop:
- 
-  - For most models, you can choose between "three_crops" and "center". 
-  
-  - For c3d, you can choose between "center", "five_crops", and "ten_crops".
-  
-  - For slowfast, there is no need to crop.
+- crop: For most models, you can choose between "three_crops" and "center". 
+(To use more crops, please go to models/model_name.py and modify the get_transform method)
 
 - crop_size: the size of the crop mentioned above.
 
@@ -34,32 +29,5 @@
 
 # For changing num_worker and batch_size
 
-Finding the best num_worker and batch_size can be kind of tricky, as changing num_worker and batch_size can lead to some unexpected behavior from pytorch dataloader (the exact number might varies across machines, below is the result on the shared GPU when no one else is using it). 
-
-- clip	
-  - only works if batch_size <= 32
-  - only works if num_worker <= 8 for batch_size = 32
-
-- slowfast
-  - only works if batch_size <= 64
-  - only works if num_worker <= 4 for batch_size = 64
- 
-- i3d
-  - only works if batch_size <= 32
-  - only works if num_worker <= 2 for batch_size = 32
-
-- c3d
-  - only works if batch_size <= 32
-  - only works if num_worker <= 8 for batch_size = 32
-
-- mvit
-  - only works if batch_size <= 32
-  - only works if num_worker <= 8 for batch_size = 32
-
-- omnivore
-  - only works if batch_size <= 4
-  - only works if num_worker <= 8 for batch_size = 4
-
-- egovlp 
-  - only works if batch_size <= 128
-  - only works if num_worker <= 8 for batch_size = 128
+Finding the best num_worker and batch_size can be kind of tricky, as using num_worker and batch_size that 
+are too big can lead to some unexpected behavior from pytorch dataloader.
