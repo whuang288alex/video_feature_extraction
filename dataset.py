@@ -84,7 +84,6 @@ class EncodedVideoCached:
                 if not isinstance(frame, av.VideoFrame):
                     raise AssertionError("other packets not supported")
                 prev_pts = frame.pts
-
                 buffer.append(frame)
                 if len(buffer) > max_buffer_size:
                     del buffer[0]
@@ -100,13 +99,11 @@ class EncodedVideoCached:
         if not (np.diff(pts_in_ret) > 0).all():
             raise AssertionError("not increasing sequence of frames")
         return ret
-
-        
+  
     @property
     def duration(self) -> float:
         vstream = self.vid._container.streams.video[0]
         return vstream.duration * vstream.time_base
-
 
 # Returns a dataset for a single "video". Each entry corresponds to a "clip"
 class IndexableVideoDataset(torch.utils.data.Dataset):
@@ -133,8 +130,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
 
         self.clips = list(self.get_all_clips(video, self.encoded_videos.duration, sampler))
 
-
-    # this function get all "clips" from the "video" accoding to the sampler
+    # this function calculate the timestamp for each clip according to the sampler
     def get_all_clips(self, video, video_length, sampler):
         last_clip_time = 0.0
         annotation = {}
@@ -144,16 +140,12 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             last_clip_time = clip.clip_end_sec
             n_clips += 1
             yield (video, clip)
-
             if clip.is_last_clip:
                 break
-        # print("\nnum_clips: ", n_clips)
-            
 
     def __len__(self):
         return len(self.clips)
 
-    
     # returns a single "clip"
     def __getitem__(self, idx):
         video, clip = self.clips[idx]

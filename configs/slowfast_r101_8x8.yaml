@@ -11,7 +11,7 @@ io:
 inference_config:
   device: cuda
   batch_size: 16
-  num_workers: 4
+  num_workers: 2
   prefetch_factor: 2
   fps: 30
   frame_window: 32
