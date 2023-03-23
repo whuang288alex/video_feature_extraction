@@ -1,6 +1,7 @@
-# Video Features
+# Fast and Easy to use video feature extractor
 
-This directory contains code to extract features from video datasets using different models.
+This directory contains the code to extract features from video datasets using mainstream vision models uch as Slowfast, i3d, c3d, CLIP, etc. The pipeline is super simple as you only need to provide the path to the input directory that contains your video data.
+
 
 ## Requirements
 
