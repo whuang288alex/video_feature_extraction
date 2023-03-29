@@ -1,6 +1,6 @@
 io:
   filter_completed: true
-  video_dir_path: inputs/videos_ego4d
+  video_dir_path: inputs/videos_thumos
   ego4d_download_dir: inputs
   uid_list: null
   video_limit: -1
@@ -11,7 +11,7 @@ io:
 inference_config:
   device: cuda
   batch_size: 32
-  num_workers: 2
+  num_workers: 8
   prefetch_factor: 2
   frame_window: 16  
   stride: 4

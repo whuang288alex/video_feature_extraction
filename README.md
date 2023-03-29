@@ -1,6 +1,6 @@
-# Video Features
+# Extracting Features from Videos
 
-This directory contains code to extract features from video datasets using different models.
+This directory contains code to conveniently extract features from video datasets using different models.
 
 ## Requirements
 
@@ -41,6 +41,10 @@ python slurm.py --config-name i3d_rgb_kinetics
 ```bash
 python slurm.py --config-name clip_vit_b_32
 ```
+
+###  To add custom transformation
+
+Change the implementation of the get_transform method under models/[model_name].py
 
 #### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
 

@@ -1,18 +1,17 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates. All Rights Reserved.
-
 from fractions import Fraction
 from typing import Any, List
-
 import av
 import numpy as np
 import torch
+import math
 from pytorchvideo.data import UniformClipSampler
 from pytorchvideo.data.encoded_video import EncodedVideo
 from pytorchvideo.data.utils import thwc_to_cthw
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.utils.data import DataLoader
 from torchvision.transforms import Compose
-
+import torch.utils.data as tdata
 from config import FeatureExtractConfig, Video, get_transform
 
 import warnings
@@ -29,13 +28,16 @@ class EncodedVideoCached:
         self.frame_buffer = []
         self.last_t = None
 
+    def set_seek(self, worker_id, num_workers):
+        self.vid._container.seek(self.vid._container.duration//num_workers * worker_id)
+    
     # this function is used to get a "clip" from the encoded video based on start_time and end_time
     def get_clip(self, t1, t2):
         if self.last_t is not None and t1 < self.last_t:
             raise AssertionError("cannot seek backward")
         
         vstream = self.vid._container.streams.video[0]
-        vs = vstream.start_time * vstream.time_base
+        vs = (vstream.start_time)* vstream.time_base
     
         frames = self.get_frames(
             self.vid._container,
@@ -44,7 +46,6 @@ class EncodedVideoCached:
             self.frame_buffer,
             self.frame_buffer_size,
         )
-        
         self.last_t = t1
         return {
             "num_frames": len(frames),
@@ -75,14 +76,15 @@ class EncodedVideoCached:
         prev_pts = None
         
         # This try except block is to avoid the EOF error that arrives because t2 exceeds the frame range 
-        try:
-            for frame in container.decode(video=0):
+        try: 
+            for frame in container.decode(video = 0):
                 if frame.pts is None:
                     raise AssertionError("frame is None")
                 if prev_pts is not None and frame.pts < prev_pts:
                     raise AssertionError("failed assumption pts in order: ")
                 if not isinstance(frame, av.VideoFrame):
                     raise AssertionError("other packets not supported")
+                
                 prev_pts = frame.pts
                 buffer.append(frame)
                 if len(buffer) > max_buffer_size:
@@ -92,7 +94,8 @@ class EncodedVideoCached:
                     ret.append(frame)
                 elif exceeds_range(frame):
                     break
-        except:
+        except Exception as e:
+            # print(e)
             pass
     
         pts_in_ret = [frame.pts for frame in ret]
@@ -104,6 +107,94 @@ class EncodedVideoCached:
     def duration(self) -> float:
         vstream = self.vid._container.streams.video[0]
         return vstream.duration * vstream.time_base
+
+
+class IterableVideoDataset(torch.utils.data.IterableDataset):
+    
+    def __init__(self, config, video, sampler, transform):
+        self.config = config
+        self.sampler = sampler
+        self.transform = transform
+        self.encoded_videos = EncodedVideoCached(video.path, 2 * config.inference_config.frame_window)
+        self.clips_info = list(self.get_all_clips(video, self.encoded_videos.duration, sampler))
+        self.set = False
+        
+    # this function calculate the timestamp for each clip according to the sampler
+    def get_all_clips(self, video, video_length, sampler):
+        last_clip_time = 0.0
+        annotation = {}
+        n_clips = 0
+        while True:
+            clip = sampler(last_clip_time, video_length, annotation)
+            last_clip_time = clip.clip_end_sec
+            n_clips += 1
+            yield (video, clip)
+            if clip.is_last_clip:
+                break
+            
+    def __iter__(self): 
+        # Only set once per worker
+        if not self.set:
+            worker_info = torch.utils.data.get_worker_info()
+            if worker_info == None:
+                # print("Single Process.\n")
+                worker_id = 0
+                num_workers = 1
+            else:
+                # print("Multiple Process.\n")
+                worker_id = worker_info.id
+                num_workers = worker_info.num_workers
+            per_worker = math.ceil((len(self.clips_info)) / float(num_workers))
+            self.iter_start = worker_id * per_worker
+            self.iter_end = min(self.iter_start + per_worker, (worker_id + 1) * per_worker)
+            self.encoded_videos.set_seek(worker_id, num_workers)
+            self.set = True
+            
+        # return iterator
+        for i in range(self.iter_start, self.iter_end): 
+            video, (
+                clip_start,
+                clip_end,
+                clip_index,
+                aug_index,
+                is_last_clip,
+            ) = self.clips_info[i]
+            clip = self.encoded_videos.get_clip(clip_start, clip_end)
+            
+            # if this clip does not have enough frame, pad it with zeros
+            if clip['num_frames'] < self.config.inference_config.frame_window:
+                pad = (self.config.inference_config.frame_window - clip['num_frames'])
+                clip["video"] = torch.cat([clip["video"], torch.zeros(3, pad, * clip["video"].shape[2:])], dim = 1)
+                clip['num_frames'] = clip["video"].shape[1]
+
+            # if this clip has too many frames, only get frame_window frames
+            elif clip['num_frames'] > self.config.inference_config.frame_window:
+                clip["video"] = clip["video"][:, :self.config.inference_config.frame_window]
+                clip['num_frames'] = clip["video"].shape[1]
+
+            # force checking the number of frames to guard against missing frames
+            assert clip['num_frames'] == self.config.inference_config.frame_window
+            
+            # the info for this clip
+            sample_dict = {
+                "video_name": video.uid,
+                "video_index": i,
+                "clip_index": clip_index,
+                "aug_index": aug_index,
+                "is_stereo": video.is_stereo,
+                "clip_start_sec": float(clip_start),
+                "clip_end_sec": float(clip_end),
+            }
+            
+            if clip["video"] is not None:
+                sample_dict["video"] = clip["video"]
+            else:
+                raise AssertionError("Audio not implemented")
+            
+            # apply transform at the "clip" level
+            sample_dict = self.transform(sample_dict)
+            yield sample_dict
+    
 
 # Returns a dataset for a single "video". Each entry corresponds to a "clip"
 class IndexableVideoDataset(torch.utils.data.Dataset):
@@ -122,12 +213,10 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         self.config = config
         self.sampler = sampler
         self.transform = transform
-
         if self.config.inference_config.include_video:
             self.encoded_videos = EncodedVideoCached(video.path, 2 * config.inference_config.frame_window)
         else:
             raise AssertionError("Audio not implemented")
-
         self.clips = list(self.get_all_clips(video, self.encoded_videos.duration, sampler))
 
     # this function calculate the timestamp for each clip according to the sampler
@@ -142,7 +231,6 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             yield (video, clip)
             if clip.is_last_clip:
                 break
-
     def __len__(self):
         return len(self.clips)
 
@@ -156,7 +244,7 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
             aug_index,
             is_last_clip,
         ) = clip
-
+        
         encoded_video = self.encoded_videos # this is the EncodedVideoCached instance
         datum = encoded_video.get_clip(clip_start, clip_end)
 
@@ -193,10 +281,11 @@ class IndexableVideoDataset(torch.utils.data.Dataset):
         # apply transform at the "clip" level
         sample_dict = self.transform(sample_dict)
         return sample_dict
-    
+  
+
 def create_dset(
     video: Video, config: FeatureExtractConfig
-) -> IndexableVideoDataset:
+) -> IterableVideoDataset:
     
     if config.io.debug_mode:
         raise AssertionError("debug mode not implemented")
@@ -219,16 +308,14 @@ def create_dset(
     )
     
     # return a custom dataset
-    return IndexableVideoDataset(
+    return IterableVideoDataset(
         config, video, clip_sampler, Compose([get_transform(config),])
     )
 
 
 def create_data_loader(dset, config: FeatureExtractConfig) -> DataLoader:
-    
     if config.inference_config.batch_size == 0:
         raise AssertionError("batch size zero is not supported") 
-    
     return DataLoader(
         dset,
         batch_size=config.inference_config.batch_size,
