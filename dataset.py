@@ -20,16 +20,15 @@ warnings.filterwarnings("ignore")
 # Encode a single "video" and store it. Only decode it when get_frames is called (once for each "clip")
 class EncodedVideoCached:
     
-    def __init__(self, path, frame_buffer_size=100):
+    def __init__(self, path, frame_buffer_size):
         self.path = path
         self.vid = EncodedVideo.from_path(path, decoder="pyav")
-        self.vid._container.seek(0)
         self.frame_buffer_size = frame_buffer_size
         self.frame_buffer = []
         self.last_t = None
 
     def set_seek(self, worker_id, num_workers):
-        self.vid._container.seek(self.vid._container.duration//num_workers * worker_id)
+        self.vid._container.seek(min(self.vid._container.duration//num_workers * worker_id - 100, 0))
     
     # this function is used to get a "clip" from the encoded video based on start_time and end_time
     def get_clip(self, t1, t2):
@@ -117,8 +116,7 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
         self.transform = transform
         self.encoded_videos = EncodedVideoCached(video.path, 2 * config.inference_config.frame_window)
         self.clips_info = list(self.get_all_clips(video, self.encoded_videos.duration, sampler))
-        self.set = False
-        
+
     # this function calculate the timestamp for each clip according to the sampler
     def get_all_clips(self, video, video_length, sampler):
         last_clip_time = 0.0
@@ -133,22 +131,19 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
                 break
             
     def __iter__(self): 
-        # Only set once per worker
-        if not self.set:
-            worker_info = torch.utils.data.get_worker_info()
-            if worker_info == None:
-                # print("Single Process.\n")
-                worker_id = 0
-                num_workers = 1
-            else:
-                # print("Multiple Process.\n")
-                worker_id = worker_info.id
-                num_workers = worker_info.num_workers
-            per_worker = math.ceil((len(self.clips_info)) / float(num_workers))
-            self.iter_start = worker_id * per_worker
-            self.iter_end = min(self.iter_start + per_worker, (worker_id + 1) * per_worker)
-            self.encoded_videos.set_seek(worker_id, num_workers)
-            self.set = True
+        
+        # Divide the workload to each loader
+        worker_info = torch.utils.data.get_worker_info()
+        if worker_info == None:
+            worker_id = 0
+            num_workers = 1
+        else:
+            worker_id = worker_info.id
+            num_workers = worker_info.num_workers
+        per_worker = math.ceil((len(self.clips_info)) / float(num_workers))
+        self.iter_start = worker_id * per_worker
+        self.iter_end = min(self.iter_start + per_worker, len(self.clips_info))
+        self.encoded_videos.set_seek(worker_id, num_workers)
             
         # return iterator
         for i in range(self.iter_start, self.iter_end): 
