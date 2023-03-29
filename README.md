@@ -31,23 +31,9 @@ python slurm.py --config-name slowfast_r101_8x8
 
 Change `--config-name` to the name of the desired configuration file (under `configs/`) 
 
-#### For example, to use the I3D model:
-
-```bash
-python slurm.py --config-name i3d_rgb_kinetics
-```
-
-#### To use the CLIP model:
-
-```bash
-python slurm.py --config-name clip_vit_b_32
-```
-
-###  To add custom transformation
+###  To use custom transformation
 
 Change the implementation of the get_transform method under models/[model_name].py
-
-#### (NOTE: for egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
 
 
 ## Adding a Model
@@ -59,6 +45,11 @@ Change the implementation of the get_transform method under models/[model_name].
 ## Acknowledgement
 
 This directory is built on top of the <a href = "https://github.com/facebookresearch/Ego4d"> Ego4d directory </a>.
+
+## Important Note
+For egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
+
+
 
 ## Appendix
 
