@@ -1,4 +1,4 @@
-# Extracting Features form Videos
+# Extracting Features frOm Videos
 
 This directory contains the code to extract features from video datasets using mainstream vision models such as Slowfast, i3d, c3d, CLIP, etc. 
 
