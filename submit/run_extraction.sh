@@ -1,40 +1,29 @@
 #!/bin/bash
 
-# have job exit if any command returns with non-zero exit status
+# TODO: modify this part if needed
+ENVNAME=feature_extraction      
+STAGING_DIR=groups/li_group_biostats
+INPUT=THUMOS14_test
+
+# basic set up
 set -e
-ENVNAME=feature_extraction
-ENVDIR=$ENVNAME
-
-# get input files from staging directory
-cp /staging/groups/li_group_biostats/feature_extraction.tar.gz ./
-cp /staging/groups/li_group_biostats/code.tar.gz ./
-
-# extract and set up the environment
 export PATH
-mkdir $ENVDIR
-tar -xzf $ENVNAME.tar.gz -C $ENVDIR
-. $ENVDIR/bin/activate
-rm feature_extraction.tar.gz
-
-# extract codes from the tar file
-tar -xzf code.tar.gz
-rm code.tar.gz
-
-######################################
-#  extract inputs from the tar file  #
-#  TODO: modify this part if needed  #
-######################################
-cp /staging/groups/li_group_biostats/val_1.tar.gz ./
-tar -xzf val_1.tar.gz
-rm  val_1.tar.gz
-mv val_1 videos
+mkdir $ENVNAME
+tar -xzf /staging/$STAGING_DIR/$ENVNAME.tar.gz -C $ENVNAME
+. $ENVNAME/bin/activate
+tar -xzf /staging/$STAGING_DIR/code.tar.gz
+mkdir videos
+tar -xzf /staging/$STAGING_DIR/$INPUT.tar.gz -C videos
 
 # run the extraction
-python slurm.py --config-name $1
+timeout 18h python slurm.py --config-name $1
+timeout_exit_status=$?
+if [ $timeout_exit_status -eq 124 ]; then
+    exit 85
+fi
+exit $timeout_exit_status
 
 # zip the results
-tar -zcvf val_1.tar.gz ./*.pt
-
-# remove other files
+tar -zcvf results.tar.gz ./*.pt
 rm ./*.py ./*.pt config.yaml
 

@@ -34,8 +34,9 @@ change the config file name in `config_name.txt` to your desired config file nam
 
 `condor_submit run_extraction.sub`
 
-
 ## Other Useful Condor commands
+
+- To submit interactive job for debugging: `condor_submit -i run_extraction.sub`
 
 - To check out task status: `conqor_q`
 
