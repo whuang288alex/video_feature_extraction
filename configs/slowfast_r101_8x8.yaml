@@ -1,10 +1,10 @@
 io:
   filter_completed: true
-  video_dir_path: inputs/videos_thumos
+  video_dir_path: videos
   ego4d_download_dir: inputs
   uid_list: null
   video_limit: -1
-  out_path: features/slowfast
+  out_path: ./
   debug_path: debug
   debug_mode: false
   exclude_no_audio: false
