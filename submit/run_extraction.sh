@@ -12,8 +12,8 @@ mkdir $ENVNAME
 tar -xzf /staging/$STAGING_DIR/$ENVNAME.tar.gz -C $ENVNAME
 . $ENVNAME/bin/activate
 tar -xzf /staging/$STAGING_DIR/code.tar.gz
-mkdir videos
-tar -xzf /staging/$STAGING_DIR/$INPUT.tar.gz -C videos
+tar -xzf /staging/$STAGING_DIR/$INPUT.tar.gz 
+mv test videos
 
 # run the extraction
 timeout 18h python slurm.py --config-name $1
