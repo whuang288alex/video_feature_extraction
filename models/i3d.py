@@ -59,6 +59,7 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
         transforms.append(ThreeCrop(config.crop_size))
     elif config.crop == "ten_crops":
         transforms.append(TenCrop(config.crop_size))
+        transforms.append(Lambda(lambda crops: torch.stack(crops)))
 
     if config.mirror:
         transforms.append(Mirror())

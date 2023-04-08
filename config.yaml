@@ -1,11 +1,11 @@
 io:
   filter_completed: true
-  video_dir_path: videos
-  ego4d_download_dir: inputs
+  video_dir_path: /home/alex/workspace/video_feature_extraction/videos
+  ego4d_download_dir: /home/alex/workspace/video_feature_extraction/inputs
   uid_list: null
   video_limit: -1
-  out_path: ./
-  debug_path: debug
+  out_path: /home/alex/workspace/video_feature_extraction/./
+  debug_path: /home/alex/workspace/video_feature_extraction/debug
   debug_mode: false
   exclude_no_audio: false
 inference_config:
@@ -13,14 +13,14 @@ inference_config:
   batch_size: 16
   num_workers: 2
   prefetch_factor: 2
-  frame_window: 16  
+  frame_window: 16
   stride: 4
   include_audio: false
   include_video: true
   norm_config:
     normalize_audio: false
     resample_audio_rate: 16000
-    resampling_method: "sinc_interpolation"
+    resampling_method: sinc_interpolation
 schedule_config:
   run_locally: true
   log_folder: slurm_log/%j

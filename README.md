@@ -39,7 +39,7 @@ python slurm.py --config-name slowfast_r101_8x8
 
 - Change `--config-name` to the name of the desired configuration file (under `configs/`) 
 
-###  To use custom transformation
+###  To use custom transformation, Crops, Mirror
 
 - Change the implementation of the get_transform method under models/[model_name].py
 

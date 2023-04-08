@@ -18,8 +18,8 @@
 
 - side_size: This is the size that the shorter side of the input video will be resized to
 
-- crop: For most models, you can choose between "three_crops" and "center". 
-(To use more crops, please go to models/model_name.py and modify the get_transform method)
+- crop: you can choose between "three_crops" and "center". 
+(To modify this behavior, please go to models/model_name.py and modify the get_transform method)
 
 - crop_size: the size of the crop mentioned above.
 
