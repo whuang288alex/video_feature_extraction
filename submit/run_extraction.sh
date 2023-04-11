@@ -3,22 +3,25 @@
 # TODO: modify this part if needed
 ENVNAME=feature_extraction      
 INPUT_STAGING_DIR=groups/li_group_biostats
-OUTPUT_STAGING_DIR=whuang288
-INPUT=THUMOS14_test
-OUTPUT=filtered_test
+INPUT_TAR=THUMOS14_test
+INPUT_FOLDER=test
+OUTPUT_STAGING_DIR=groups/li_group_biostats
+OUTPUT_TAR=results
 
-# Assume input directory name is set to "videos" and code is zipped to "code.tar.gz"
+# Assumptions:
+# 1) input directory name in the config file is set to "videos"
+# 2) code is zipped to "code.tar.gz"
 set -e
 export PATH
 mkdir $ENVNAME
 tar -xzf /staging/$INPUT_STAGING_DIR/$ENVNAME.tar.gz -C $ENVNAME
 . $ENVNAME/bin/activate
 tar -xzf /staging/$INPUT_STAGING_DIR/code.tar.gz
-tar -xzf /staging/$INPUT_STAGING_DIR/$INPUT.tar.gz
-mv test videos
+tar -xzf /staging/$INPUT_STAGING_DIR/$INPUT_TAR.tar.gz
+mv $INPUT_FOLDER videos
 
 # run the extraction
-timeout 18h python slurm.py --config-name $1
+timeout 23h python slurm.py --config-name $1
 timeout_exit_status=$?
 if [ $timeout_exit_status -eq 124 ]; then
     exit 85
