@@ -6,6 +6,10 @@ error = error_$(Cluster)_$(Process).err
 executable = run_extraction.sh
 arguments = $(config)
 
+checkpoint_exit_code        = 85
+transfer_checkpoint_files   = ./*.pt
++is_resumable = true
+
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 

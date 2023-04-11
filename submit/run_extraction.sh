@@ -2,17 +2,19 @@
 
 # TODO: modify this part if needed
 ENVNAME=feature_extraction      
-STAGING_DIR=groups/li_group_biostats
+INPUT_STAGING_DIR=groups/li_group_biostats
+OUTPUT_STAGING_DIR=whuang288
 INPUT=THUMOS14_test
+OUTPUT=filtered_test
 
-# basic set up
+# Assume input directory name is set to "videos" and code is zipped to "code.tar.gz"
 set -e
 export PATH
 mkdir $ENVNAME
-tar -xzf /staging/$STAGING_DIR/$ENVNAME.tar.gz -C $ENVNAME
+tar -xzf /staging/$INPUT_STAGING_DIR/$ENVNAME.tar.gz -C $ENVNAME
 . $ENVNAME/bin/activate
-tar -xzf /staging/$STAGING_DIR/code.tar.gz
-tar -xzf /staging/$STAGING_DIR/$INPUT.tar.gz 
+tar -xzf /staging/$INPUT_STAGING_DIR/code.tar.gz
+tar -xzf /staging/$INPUT_STAGING_DIR/$INPUT.tar.gz
 mv test videos
 
 # run the extraction
@@ -24,6 +26,7 @@ fi
 exit $timeout_exit_status
 
 # zip the results
-tar -zcvf results.tar.gz ./*.pt
+tar -zcvf $OUTPUT.tar.gz ./*.pt
 rm ./*.py ./*.pt config.yaml
+mv $OUTPUT.tar.gz /staging/$OUTPUT_STAGING_DIR/
 

@@ -17,12 +17,12 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
     
     # list all the files in the directory
     def _uids_for_dir(path: str) -> List[str]:
+        with open("video_list.txt") as file:
+            video_list = [line.rstrip() for line in file]
         ret = [
             p
             for p in os.listdir(path)
-            if Path(p).suffix not in [".json", ".csv", ".csv"]
-            and not p.startswith(".")
-            and not p.startswith("manifest")
+            if p in video_list
         ]
         return [Path(p).stem for p in ret]
     
