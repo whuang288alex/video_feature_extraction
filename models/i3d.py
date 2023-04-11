@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Tuple
 
 import torch
-from config import BaseModelConfig, InferenceConfig
+from src.config import BaseModelConfig, InferenceConfig
 from models.common import FeedVideoInput, ThreeCrop, Mirror
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module

@@ -9,9 +9,9 @@ from typing import List
 import hydra
 import torch
 from omegaconf import OmegaConf
-from get_videos import get_videos
-from config import FeatureExtractConfig, Video
-from extract_features import perform_feature_extraction
+from src.get_videos import get_videos
+from src.config import FeatureExtractConfig, Video
+from src.extract_features import perform_feature_extraction
 
 
 sys.path.insert(0, os.getcwd())

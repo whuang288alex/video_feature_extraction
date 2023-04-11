@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 
 import torch
 from torch import nn
-from config import BaseModelConfig, InferenceConfig
+from src.config import BaseModelConfig, InferenceConfig
 from models.common import FeedVideoInputList, Mirror
 from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.nn import Identity, Module

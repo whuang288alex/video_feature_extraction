@@ -1,1 +1,0 @@
-python slurm.py --config-name i3d_rgb_kinetics

@@ -12,7 +12,7 @@ from pytorchvideo.transforms import ApplyTransformToKey, ShortSideScale
 from torch.utils.data import DataLoader
 from torchvision.transforms import Compose
 import torch.utils.data as tdata
-from config import FeatureExtractConfig, Video, get_transform
+from src.config import FeatureExtractConfig, Video, get_transform
 
 import warnings
 warnings.filterwarnings("ignore")

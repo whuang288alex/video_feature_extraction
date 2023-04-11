@@ -5,7 +5,7 @@ from typing import Tuple
 import os
 
 import torch
-from config import BaseModelConfig, InferenceConfig
+from src.config import BaseModelConfig, InferenceConfig
 from models.common import FeedVideoInput, ThreeCrop, Mirror
 from torchvision.transforms import (
     Compose, Resize, CenterCrop, FiveCrop, TenCrop, Lambda

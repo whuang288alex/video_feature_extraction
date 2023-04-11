@@ -1,6 +1,6 @@
 # Extracting Features from Videos
 
-This directory contains the code to extract features from video datasets using mainstream vision models such as Slowfast, i3d, c3d, CLIP, etc. 
+This directory contains the code to extract features from video datasets using mainstream vision models such as Slowfast, i3d, c3d, CLIP, etc. The only requirement for you is to provide a list of videos that you would like to extract features from in your input directory.
 
 <br>
 
@@ -21,7 +21,7 @@ python -m pip install -r requirements.txt
     
 - ` models/`: This is the directory where you implement the models you use for feature extraction.
     
-- ` inputs/`: This is the default directory where you store the input videos.
+- ` videos/`: This is the default directory where you store the input videos.
     
 - ` submit/`: This directory contains the code to submit computation to CHTC for throughput computing.
 
@@ -30,7 +30,7 @@ python -m pip install -r requirements.txt
 ## Feature Extraction 
 
 ```sh
-python slurm.py --config-name slowfast_r101_8x8
+python main.py --config-name i3d_rgb_kinetics
 ```
 
 <br>
@@ -63,7 +63,7 @@ For egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained check
 
 To resize the video:
 
-`python resize_videos.py -vi ./inputs/videos -vo ./ -s 288 -fps 30`
+`python src/resize_videos.py -vi ./inputs/videos -vo ./ -s 288 -fps 30`
 
 <br>
 

@@ -8,7 +8,7 @@ from typing import List, Tuple
 import math
 
 import cv2
-from config import FeatureExtractConfig, InputOutputConfig, Video
+from src.config import FeatureExtractConfig, InputOutputConfig, Video
 
 
 # helper function to get all the videos in the input directory
@@ -16,15 +16,22 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
     
     
     # list all the files in the directory
-    def _uids_for_dir(path: str) -> List[str]:
-        root =  os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(root, "video_list.txt")) as file:
-            video_list = [line.rstrip() for line in file]
-        ret = [
-            p
-            for p in os.listdir(path)
-            if p in video_list
-        ]
+    def _uids_for_dir(path: str, filter_input = False) -> List[str]:
+        
+        if filter_input:
+            with open(os.path.join(path, "video_list.txt")) as file:
+                video_list = [line.rstrip() for line in file]
+                ret = [
+                    p
+                    for p in os.listdir(path)
+                    if p in video_list
+                ]
+        else:
+            ret = [
+                p
+                for p in os.listdir(path)
+                if ".pt" in p
+            ]   
         return [Path(p).stem for p in ret]
     
     
@@ -33,7 +40,7 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
         uids = config.uid_list
         if uids is None:
             assert config.video_dir_path is not None, "Not given any uids"
-            uids = _uids_for_dir(config.video_dir_path)
+            uids = _uids_for_dir(config.video_dir_path, True)
         return uids
 
 

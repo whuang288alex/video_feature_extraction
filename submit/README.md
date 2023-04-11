@@ -16,7 +16,7 @@ chmod 644 feature_extraction.tar.gz
 2. To pack your codes (Please change i3d_arch to the model that you are using)
 
 ```sh
-tar -zcvf code.tar.gz ../slurm.py ../config.py ../dataset.py ../extract_features.py ../get_videos.py ../configs/ ../models/*.py ../models/i3d_arch
+tar -zcvf code.tar.gz ../main.py ../src/config.py ../src/dataset.py ../src/extract_features.py ../src/get_videos.py ../configs/ ../models/*.py ../models/i3d_arch
 ```
 
 3. To move those to the staging directory:

@@ -13,8 +13,8 @@ import torch
 from torch.nn import Module
 from tqdm import tqdm
 
-from config import FeatureExtractConfig, InferenceConfig, Video, load_model
-from dataset import create_data_loader_or_dset
+from src.config import FeatureExtractConfig, InferenceConfig, Video, load_model
+from src.dataset import create_data_loader_or_dset
 
 
 @dataclass
