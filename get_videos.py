@@ -17,8 +17,10 @@ def _videos(config: InputOutputConfig, unfiltered: bool = False) -> List[Video]:
     
     # list all the files in the directory
     def _uids_for_dir(path: str) -> List[str]:
-        with open("video_list.txt") as file:
-            video_list = [line.rstrip() for line in file]
+        root =  os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(root, "video_list.txt")) as file:
+            video_list = [f"{path}/{line.rstrip()}"  for line in file]
+            
         ret = [
             p
             for p in os.listdir(path)
