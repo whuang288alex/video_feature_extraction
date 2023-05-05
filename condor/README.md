@@ -14,21 +14,21 @@ mv feature_extraction.tar.gz  /staging/groups/li_group_biostats/video_feature_ex
 2. To pack your codes (Please change clip_arch to the model that you are using)
 
 ```sh
-tar -zcvf code.tar.gz ../main.py ../src/config.py ../src/dataset.py ../src/extract_features.py ../src/get_videos.py ../configs/ ../models/*.py ../models/clip_arch ../models/i3d_arch
-mv code.tar.gz /staging/groups/li_group_biostats/video_feature_extraction
+tar -zcvf video_feature_extraction.tar.gz ../main.py ../src/config.py ../src/dataset.py ../src/extract_features.py ../src/get_videos.py ../configs/ ../models/*.py ../models/clip_arch ../models/i3d_arch
+mv video_feature_extraction.tar.gz /staging/groups/li_group_biostats/video_feature_extraction
 ```
 
 3. To specify the configuration
 
-change the config file name in `config_name.txt` to your desired config file name.
+Modify the bash script to run with the desired config.
 
 5. Submit the files
 
-`condor_submit template.sub`
+`condor_submit extract.sub`
 
 ## Other Useful Condor commands
 
-- To submit interactive job for debugging: `condor_submit -i template.sub`
+- To submit interactive job for debugging: `condor_submit -i extract.sub`
 
 - To check out task status: `conqor_q`
 

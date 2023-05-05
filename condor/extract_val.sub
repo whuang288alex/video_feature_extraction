@@ -1,0 +1,25 @@
+universe = vanilla
+log = log_$(Cluster).log
+output = output_$(Cluster)_$(Process).out
+error = error_$(Cluster)_$(Process).err
+
+executable = extract_val.sh
+
+checkpoint_exit_code        = 85
+transfer_checkpoint_files   = ./*.pt
++is_resumable = true
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+request_gpus = 1
+request_cpus = 1
+request_memory = 50GB
+request_disk = 128GB 
+
++WantGPULab = true
++GPUJobLength = "medium"
+requirements =  (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
+require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
+
+queue 1
