@@ -35,7 +35,7 @@ schedule_config:
   time_per_forward_pass: 2.4
   schedule_time_per_node: 10.0
 model_config:
-  use_remote: true
+  use_remote: false
   hub_path: ViT-B-32
   model_name: "clip"
   input_type: "video"

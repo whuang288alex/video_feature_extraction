@@ -1,0 +1,4 @@
+.bash_history
+*.log
+*.err
+*.out

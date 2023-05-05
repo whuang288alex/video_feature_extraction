@@ -23,7 +23,7 @@ python -m pip install -r requirements.txt
     
 - ` videos/`: This is the default directory where you store the input videos.
     
-- ` submit/`: This directory contains the code to submit computation to CHTC for throughput computing.
+- ` condor/`: This directory contains the code to submit computation to CHTC for throughput computing.
 
 <br>
 
@@ -55,15 +55,7 @@ python main.py --config-name i3d_rgb_kinetics
 
 ## Important Note
 
-For egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.)
-
-<br>
-
-## Appendix
-
-To resize the video:
-
-`python src/resize_videos.py -vi ./inputs/videos -vo ./ -s 288 -fps 30`
+For egovlp, i3d, and c3d, you are REQUIRED to manually download pretrained checkpoints for the code to start working. Please refer to [models/README](models/README.md) for more info.
 
 <br>
 
@@ -71,4 +63,9 @@ To resize the video:
 
 This directory is built on top of the <a href = "https://github.com/facebookresearch/Ego4d"> Ego4d directory </a>.
 
+<br>
+
+## Appendix
+
+To resize the video or to convert the video into a different frame rate, refer to this <a href = "https://github.com/whuang288alex/resize_videos"> repository </a>.
 

@@ -3,7 +3,7 @@ log = log_$(Cluster).log
 output = output_$(Cluster)_$(Process).out
 error = error_$(Cluster)_$(Process).err
 
-executable = run_extraction.sh
+executable = extract_test.sh
 arguments = $(config)
 
 checkpoint_exit_code        = 85
