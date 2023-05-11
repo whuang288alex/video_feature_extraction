@@ -23,7 +23,7 @@ cp /staging/$INPUT_STAGING_DIR/datasets/video_list.txt ./videos/
 python main.py --config-name $CONFIG_NAME
 
 # zip the results
-tar -zcvf $OUTPUT.tar.gz ./*.pt
+tar -zcvf $OUTPUT_TAR.tar.gz ./*.pt
 rm ./*.py ./*.pt config.yaml
-mv $OUTPUT.tar.gz /staging/$OUTPUT_STAGING_DIR/
+cp $OUTPUT_TAR.tar.gz /staging/$OUTPUT_STAGING_DIR/
 

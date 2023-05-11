@@ -18,7 +18,7 @@ request_memory = 50GB
 request_disk = 128GB 
 
 +WantGPULab = true
-+GPUJobLength = "medium"
++GPUJobLength = "long"
 requirements =  (OpSysMajorVer == 7) || (OpSysMajorVer == 8)
 require_gpus = (DriverVersion >= 10.2) && (Capability < 8)
 

@@ -14,7 +14,7 @@ mv feature_extraction.tar.gz  /staging/groups/li_group_biostats/video_feature_ex
 2. To pack your codes (Please change clip_arch to the model that you are using)
 
 ```sh
-tar -zcvf video_feature_extraction.tar.gz ../main.py ../src/config.py ../src/dataset.py ../src/extract_features.py ../src/get_videos.py ../configs/ ../models/*.py ../models/clip_arch ../models/i3d_arch
+tar -zcvf video_feature_extraction.tar.gz ../main.py ../src/ ../configs/ ../models/
 mv video_feature_extraction.tar.gz /staging/groups/li_group_biostats/video_feature_extraction
 ```
 
