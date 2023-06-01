@@ -31,7 +31,7 @@ class EncodedVideoCached:
         self.vid._container.seek(min(self.vid._container.duration//num_workers * worker_id - 100, 0))
     
     # this function is used to get a "clip" from the encoded video based on start_time and end_time
-    def get_clip(self, t1, t2):
+    def get_clip(self, t1, t2, is_last_clip = False):
         if self.last_t is not None and t1 < self.last_t:
             raise AssertionError("cannot seek backward")
         
@@ -45,16 +45,24 @@ class EncodedVideoCached:
             self.frame_buffer,
             self.frame_buffer_size,
         )
+        
         self.last_t = t1
-        return {
-            "num_frames": len(frames),
-            "video": thwc_to_cthw(
-                torch.stack(
-                    [torch.from_numpy(frame.to_rgb().to_ndarray()) for frame in frames]
-                )
-            ).to(torch.float32),
-            "audio": None,
-        }
+        try:
+            ret = {
+                "num_frames": len(frames),
+                "video": thwc_to_cthw(
+                    torch.stack(
+                        [torch.from_numpy(frame.to_rgb().to_ndarray()) for frame in frames]
+                    )
+                ).to(torch.float32),
+                "audio": None,
+            }
+        except Exception as e:
+            if is_last_clip:
+                return None
+            print("\n\nError in get_clip: ")
+            exit()
+        return ret
         
     # this function is used to get "frames" for a "clip" based on start_time and end_time
     def get_frames(self, container, t1, t2, buffer, max_buffer_size):
@@ -93,8 +101,7 @@ class EncodedVideoCached:
                     ret.append(frame)
                 elif exceeds_range(frame):
                     break
-        except Exception as e:
-            # print(e)
+        except EOFError as e:
             pass
     
         pts_in_ret = [frame.pts for frame in ret]
@@ -154,10 +161,17 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
                 aug_index,
                 is_last_clip,
             ) = self.clips_info[i]
-            clip = self.encoded_videos.get_clip(clip_start, clip_end)
+            clip = self.encoded_videos.get_clip(clip_start, clip_end, is_last_clip)
             
+            if clip is None:
+                clip = {
+                    "num_frames": self.config.inference_config.frame_window,
+                    "video": torch.zeros(3, self.config.inference_config.frame_window, 180, 320),   # size of thumos dataset frame is 180 * 320
+                    "audio": None,
+                }
+                
             # if this clip does not have enough frame, pad it with zeros
-            if clip['num_frames'] < self.config.inference_config.frame_window:
+            elif clip['num_frames'] < self.config.inference_config.frame_window:
                 pad = (self.config.inference_config.frame_window - clip['num_frames'])
                 clip["video"] = torch.cat([clip["video"], torch.zeros(3, pad, * clip["video"].shape[2:])], dim = 1)
                 clip['num_frames'] = clip["video"].shape[1]
@@ -167,9 +181,6 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
                 clip["video"] = clip["video"][:, :self.config.inference_config.frame_window]
                 clip['num_frames'] = clip["video"].shape[1]
 
-            # force checking the number of frames to guard against missing frames
-            assert clip['num_frames'] == self.config.inference_config.frame_window
-            
             # the info for this clip
             sample_dict = {
                 "video_name": video.uid,
@@ -183,8 +194,6 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
             
             if clip["video"] is not None:
                 sample_dict["video"] = clip["video"]
-            else:
-                raise AssertionError("Audio not implemented")
             
             # apply transform at the "clip" level
             sample_dict = self.transform(sample_dict)
@@ -290,7 +299,7 @@ def create_dset(
         
         # how many seconds each clip is in 
         clip_duration=Fraction(
-            config.inference_config.frame_window,  Fraction(video.frame_rate)
+            config.inference_config.frame_window, Fraction(video.frame_rate)
         )
         if isinstance(config.inference_config.frame_window, int)
         else config.inference_config.frame_window,

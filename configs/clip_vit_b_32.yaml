@@ -11,10 +11,10 @@ io:
 inference_config:
   device: cuda
   batch_size: 32
-  num_workers: 8
+  num_workers: 0
   prefetch_factor: 2
-  frame_window: 16 
-  stride: 4      
+  frame_window: 1
+  stride: 1     
   include_audio: false
   include_video: true
   norm_config:
@@ -34,7 +34,7 @@ schedule_config:
   time_per_forward_pass: 2.4
   schedule_time_per_node: 10.0
 model_config:
-  use_remote: false
+  use_remote: true
   hub_path: ViT-B-32
   model_name: "clip"
   input_type: "video"
