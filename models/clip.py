@@ -32,11 +32,14 @@ class WrapModel(Module):
     def forward(self, x) -> torch.Tensor:
         input = x['video']
         if input.ndim == 5:
+            print("using 5d input")
+            print("input.shape: ", input.shape)
             out = self.model(input[:,:,0])
         elif input.ndim == 6:
             # input.shape: [1(bs), 6(mirror + 3crop), 3(color), 8(T), 224(w), 224(h)]
             # output.shape: [1(bs), 512(feature), 6(mirror + 3crop)] -> [1, 512, 2(mirror), 3(3crop)]
-            out = torch.stack([self.model(input[:, i, :, 0]) for i in range(input.shape[1])], dim = -1).view(input.shape[0], -1, 2, 3)
+            # because clip is an image model, we only throw in the first frame of each clip
+            out = torch.stack([self.model(input[:, i, :, 0]) for i in range(input.shape[1])], dim = -1).view(input.shape[0], -1, 2)
         else:
             raise ValueError('invalid input size')
         return out
@@ -77,7 +80,7 @@ def get_transform(inference_config: InferenceConfig, config: ModelConfig):
     assert config.input_type == "video"
     transforms = [
         Lambda(lambda x: x[:, ::config.dilation]),
-        Lambda(lambda x: x / 255.0),
+        # Lambda(lambda x: x / 255.0),
         NormalizeVideo(config.mean, config.std),
         ShortSideScale(size=config.side_size),
     ]

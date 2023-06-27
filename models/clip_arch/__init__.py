@@ -8,7 +8,6 @@ from pkg_resources import packaging
 import torch
 from PIL import Image
 from .model import build_model
-
 try:
     from torchvision.transforms import InterpolationMode
     BICUBIC = InterpolationMode.BICUBIC

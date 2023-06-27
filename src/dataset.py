@@ -164,6 +164,8 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
             clip = self.encoded_videos.get_clip(clip_start, clip_end, is_last_clip)
             
             if clip is None:
+                print("error in get_clip")
+                exit()
                 clip = {
                     "num_frames": self.config.inference_config.frame_window,
                     "video": torch.zeros(3, self.config.inference_config.frame_window, 180, 320),   # size of thumos dataset frame is 180 * 320
