@@ -103,7 +103,7 @@ def _extract_features(
         else:
             x["video"] = v.to(device)
             batch_size = v.shape[0]
-                
+        
         t2 = time.time()
         transfer_time = t2 - t1
         t1 = time.time()

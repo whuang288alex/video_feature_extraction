@@ -196,7 +196,7 @@ class IterableVideoDataset(torch.utils.data.IterableDataset):
             
             if clip["video"] is not None:
                 sample_dict["video"] = clip["video"]
-            
+         
             # apply transform at the "clip" level
             sample_dict = self.transform(sample_dict)
             yield sample_dict

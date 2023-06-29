@@ -13,8 +13,8 @@ inference_config:
   batch_size: 32
   num_workers: 0
   prefetch_factor: 2
-  frame_window: 6
-  stride: 6  
+  frame_window: 1
+  stride: 1
   include_audio: false
   include_video: true
   norm_config:
