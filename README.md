@@ -17,17 +17,19 @@ python -m pip install -r requirements.txt
 
 ## Structure of the Repository
 
+- ` models/`: This is the directory where you customize the models (e.g. structure, preprocessing, cropping) you want to use for feature extraction.
+
 - ` configs/`: This directory contains configuration files that define different runtime settings
-    
-- ` models/`: This is the directory where you implement the models you use for feature extraction.
     
 - ` videos/`: This is the default directory where you store the input videos.
     
-- ` condor/`: This directory contains the code to submit computation to CHTC for throughput computing.
+- ` condor/`: This directory contains the code to submit computation to CHTC for throughput computing, ignore if not applicable.
 
 <br>
 
 ## Feature Extraction 
+
+(Make sure to change the path in the config file)
 
 ```sh
 python main.py --config-name i3d_rgb_kinetics
@@ -35,11 +37,13 @@ python main.py --config-name i3d_rgb_kinetics
 
 <br>
 
-###  To run with a different configuration
+##  To run with a different configuration
 
 - Change `--config-name` to the name of the desired configuration file (under `configs/`) 
 
-###  To use custom transformation, Crops, Mirror
+- Examples in main.sh
+
+##  To use custom transformation, cropping, and mirroring
 
 - Change the implementation of the get_transform method under models/[model_name].py
 

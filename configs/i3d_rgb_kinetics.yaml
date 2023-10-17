@@ -1,17 +1,17 @@
 io:
   filter_completed: true
-  video_dir_path: videos
+  video_dir_path: /home/alex/workspace/video_feature_extraction/videos
   ego4d_download_dir: inputs
   uid_list: null
   video_limit: -1
-  out_path: ./
+  out_path:  /home/alex/workspace/video_feature_extraction/results
   debug_path: debug
   debug_mode: false
   exclude_no_audio: false
 inference_config:
   device: cuda
   batch_size: 16
-  num_workers: 2
+  num_workers: 4
   prefetch_factor: 2
   frame_window: 16  
   stride: 4
@@ -46,6 +46,6 @@ model_config:
   - 0.5
   - 0.5
   - 0.5
-  crop: ten_crops
+  crop: center
   mirror: false
 model_module_str: models.i3d

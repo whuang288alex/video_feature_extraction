@@ -13,6 +13,7 @@ from torchvision.transforms import Compose, Lambda
 import warnings
 warnings.filterwarnings("ignore")
 
+
 @dataclass
 class NormalizationConfig:
     normalize_audio: bool = False
